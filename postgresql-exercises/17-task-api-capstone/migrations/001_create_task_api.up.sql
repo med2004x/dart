@@ -1,0 +1,2 @@
+-- TODO: create the capstone schema from a clean database.
+-- Include users, projects, tasks, constraints, and justified indexes.

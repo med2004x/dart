@@ -1,0 +1,8 @@
+{
+  "error": "validation_failed",
+  "message": "request is invalid",
+  "requestId": "req-example",
+  "fields": {
+    "title": "title is required"
+  }
+}

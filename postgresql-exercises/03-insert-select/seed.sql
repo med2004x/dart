@@ -1,0 +1,10 @@
+-- Insert three users and use RETURNING to record their IDs.
+-- Insert at least three projects using the returned owner IDs.
+-- Insert at least six tasks:
+--   two open
+--   one blocked
+--   one done
+--   one without due_at
+--   several priorities
+--
+-- Do not assume IDs begin at 1 after failed or repeated inserts.
