@@ -19,6 +19,8 @@ This workspace teaches Go and backend systems through connected project tracks:
 - [`ps-exercises`](ps-exercises):
   fifteen beginner problem-solving projects that teach every required algorithm
   from pseudocode and hand traces before Go implementation
+- [`cs50`](cs50): CS50 setup and problem-set workspace for the C course,
+  using WSL-based compiler tools on this Windows machine
 
 Despite the parent folder name, this is a Go workspace.
 
