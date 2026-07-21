@@ -1,5 +1,7 @@
 # Project 08 - NULL, CTEs, And Window Functions
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Choose advanced query tools based on result shape instead of writing one opaque

@@ -1,5 +1,7 @@
 # Exercise 09 - Payment Interfaces
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 An interface is a set of required methods. It lets a caller depend on behavior

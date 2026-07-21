@@ -1,5 +1,7 @@
 # Project 07 - Idempotent Creates
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Make repeated create requests return the original result instead of creating

@@ -1,5 +1,7 @@
 # Exercise 05 - Contact Book
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 CRUD means Create, Read, Update, and Delete. Most data-backed applications are

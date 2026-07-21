@@ -1,5 +1,7 @@
 # Exercise 06 - Text Analyzer
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 Text processing is a pipeline:

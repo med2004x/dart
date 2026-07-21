@@ -1,5 +1,7 @@
 # Project 07 - Aggregations And Reports
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Reduce rows into trustworthy summaries without double-counting joins.

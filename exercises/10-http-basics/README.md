@@ -1,5 +1,7 @@
 # Exercise 10 - HTTP Basics
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 An HTTP server is a long-running program that:

@@ -12,6 +12,10 @@ The goal is to move through three stages:
 
 Running once is only stage one.
 
+Use the workspace [Go Quick Reference](../GO-QUICK-REFERENCE.md) when syntax is
+the blocker. It contains short generic examples and official documentation
+links; the exercise READMEs remain focused on requirements and proof cases.
+
 ## Before Exercise 01
 
 Install Go, then verify the installation in PowerShell:

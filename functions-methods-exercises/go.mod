@@ -1,3 +1,3 @@
 module go-functions-methods-exercises
 
-go 1.22
+go 1.26.0

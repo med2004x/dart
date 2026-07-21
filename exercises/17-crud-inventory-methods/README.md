@@ -1,5 +1,7 @@
 # Exercise 17 - CRUD Inventory With Methods
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Build CRUD again, but this time wrap the slice inside a struct and use methods.

@@ -1,5 +1,7 @@
 # Project 01 - PostgreSQL Server And psql
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Start PostgreSQL, connect with `psql`, and distinguish server, database, schema,

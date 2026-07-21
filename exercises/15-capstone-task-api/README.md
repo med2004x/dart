@@ -1,5 +1,7 @@
 # Exercise 15 - Capstone Task API
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Build a complete local task API and be able to explain every boundary:

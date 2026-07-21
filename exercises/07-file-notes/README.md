@@ -1,5 +1,7 @@
 # Exercise 07 - File Notes
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 Until now, data existed only in memory. When the process ended, the operating

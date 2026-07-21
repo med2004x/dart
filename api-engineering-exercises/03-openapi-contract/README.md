@@ -1,5 +1,7 @@
 # Project 03 - OpenAPI Contract
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Describe one API operation in a machine-readable OpenAPI document before

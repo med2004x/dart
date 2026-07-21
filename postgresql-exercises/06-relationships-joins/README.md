@@ -1,5 +1,7 @@
 # Project 06 - Relationships And Joins
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Reconstruct related data while predicting result cardinality.

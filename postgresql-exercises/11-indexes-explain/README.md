@@ -1,5 +1,7 @@
 # Project 11 - Indexes And EXPLAIN
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Add one index for one measured query and prove its effect with query plans.

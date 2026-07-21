@@ -24,6 +24,8 @@ This workspace teaches Go and backend systems through connected project tracks:
 
 Despite the parent folder name, this is a Go workspace.
 
+For a compact syntax and resources guide, start with [Go Quick Reference](GO-QUICK-REFERENCE.md).
+
 ## Recommended Route
 
 If programming itself is new:

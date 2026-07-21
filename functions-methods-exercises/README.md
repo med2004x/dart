@@ -6,6 +6,10 @@ The exercises start with simple function calls and move toward method receivers,
 state changes, dependency boundaries, and a small capstone. Each project is a
 separate `main` package.
 
+Read the short [Quick Reference](QUICK-REFERENCE.md) before starting. It gives
+the syntax and decision rules used across this track without solving the
+numbered exercises.
+
 ## How To Use This Track
 
 For each numbered folder:

@@ -1,5 +1,7 @@
 # Exercise 11 - Functions Vs Methods
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Practice deciding whether behavior belongs as a function or a method.

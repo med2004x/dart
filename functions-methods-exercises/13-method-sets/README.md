@@ -1,5 +1,7 @@
 # Exercise 13 - Method Sets
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Practice the difference between value receiver methods and pointer receiver

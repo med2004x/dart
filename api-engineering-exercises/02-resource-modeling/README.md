@@ -1,5 +1,7 @@
 # Project 02 - Resource And URL Modeling
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Model stable resources and ownership before writing route code.

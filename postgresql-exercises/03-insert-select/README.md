@@ -1,5 +1,7 @@
 # Project 03 - Insert And Select
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Create rows, retrieve generated IDs, filter sets, and define deterministic

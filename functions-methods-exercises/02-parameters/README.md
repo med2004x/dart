@@ -1,5 +1,7 @@
 # Exercise 02 - Parameters
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Practice passing values into functions.

@@ -1,5 +1,7 @@
 # Exercise 18 - CRUD Notes With Errors
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Build CRUD again, but add validation and error returns.

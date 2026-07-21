@@ -1,5 +1,7 @@
 # Exercise 12 - Error Returns
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Practice functions and methods that return errors when requested work cannot be

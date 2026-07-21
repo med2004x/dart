@@ -1,5 +1,7 @@
 # Project 10 - Concurrency, Locks, And Isolation
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Observe blocking, snapshots, serialization failures, and deadlock detection with

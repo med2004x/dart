@@ -1,5 +1,7 @@
 # Exercise 11 - JSON API
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 This exercise turns an HTTP body into a typed Go value and turns a typed Go

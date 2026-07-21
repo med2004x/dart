@@ -1,5 +1,7 @@
 # Project 04 - HTTP Methods And Status Codes
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Implement method/path behavior where statuses carry accurate meaning.

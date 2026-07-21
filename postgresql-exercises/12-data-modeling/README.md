@@ -1,5 +1,7 @@
 # Project 12 - Data Modeling And Normalization
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Model an order system so each fact has one owner and historical facts remain

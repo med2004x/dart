@@ -6,6 +6,10 @@ and explain.
 Do the projects in order. Each project adds one system responsibility while
 keeping the previous ones understandable.
 
+Use the short [Quick Reference](QUICK-REFERENCE.md) for the recurring Go and
+systems patterns. It is intentionally brief; each project README defines the
+actual experiment and evidence to produce.
+
 ## Working Method
 
 For every project:

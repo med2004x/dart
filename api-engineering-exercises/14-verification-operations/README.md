@@ -1,5 +1,7 @@
 # Project 14 - API Verification And Operations
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Verify the API contract at unit, HTTP, integration, and end-to-end boundaries,

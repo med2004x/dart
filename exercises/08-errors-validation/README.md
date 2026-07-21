@@ -1,5 +1,7 @@
 # Exercise 08 - Errors And Validation
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 An error is a value describing why a requested operation could not be completed.

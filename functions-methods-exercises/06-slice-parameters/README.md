@@ -1,5 +1,7 @@
 # Exercise 06 - Slice Parameters
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Practice functions that receive a slice and answer questions about the data.

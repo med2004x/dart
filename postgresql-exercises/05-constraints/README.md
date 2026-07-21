@@ -1,5 +1,7 @@
 # Project 05 - Constraints
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Make PostgreSQL reject invalid state regardless of which caller writes it.

@@ -1,5 +1,7 @@
 # Exercise 12 - Router And CRUD API
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 This exercise combines resource design, route parsing, JSON, and mutable state.

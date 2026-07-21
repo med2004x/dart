@@ -6,6 +6,10 @@ handlers.
 Each project produces a runnable behavior or a reviewable contract. Complete
 them in order.
 
+Use the short [Quick Reference](QUICK-REFERENCE.md) when HTTP or Go handler
+syntax is unfamiliar. It gives generic examples and keeps the project-specific
+requirements here focused.
+
 ## Project Map
 
 | Project | Main result |

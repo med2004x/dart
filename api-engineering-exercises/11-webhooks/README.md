@@ -1,5 +1,7 @@
 # Project 11 - Webhooks
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Deliver signed events to customer endpoints with retries, deduplication, and an

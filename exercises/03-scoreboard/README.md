@@ -1,5 +1,7 @@
 # Exercise 03 - Scoreboard
 
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## What You Are Learning
 
 This exercise combines data modeling with aggregation:

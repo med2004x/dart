@@ -1,5 +1,7 @@
 # Exercise 07 - Return Updated State
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Practice functions that receive current state and return updated state.

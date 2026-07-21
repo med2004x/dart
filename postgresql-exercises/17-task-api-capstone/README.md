@@ -1,5 +1,7 @@
 # Project 17 - PostgreSQL Task API Capstone
 
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+
 ## Goal
 
 Replace file persistence in the Go task capstone with a production-shaped

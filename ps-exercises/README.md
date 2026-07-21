@@ -16,6 +16,10 @@ steps:
 output: 13
 ```
 
+Use the short [Quick Reference](QUICK-REFERENCE.md) when a Go or algorithm
+pattern is unfamiliar. It gives generic syntax and proof habits without solving
+the numbered projects.
+
 The code is a translation of the steps.
 
 ## How To Solve A Problem

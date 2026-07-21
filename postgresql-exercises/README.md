@@ -4,6 +4,10 @@ This folder teaches relational databases through one evolving project/task
 database. It is cumulative: each numbered project assumes the previous project
 is complete.
 
+Use the short [Quick Reference](QUICK-REFERENCE.md) when SQL syntax is
+unfamiliar. It covers the recurring statement shapes and links to the official
+PostgreSQL documentation.
+
 ## What You Build
 
 ```text
