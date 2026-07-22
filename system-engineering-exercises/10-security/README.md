@@ -1,52 +1,102 @@
 # Project 10 - Authentication, Authorization, And Abuse
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Prevent one authenticated user from reading or changing another user's task.
-Client-provided IDs must never grant permission.
+## What You Are Learning
 
-## Model
+- security is mostly boundaries and trust decisions
+- least privilege should be visible in the design
+- the attack surface should shrink, not grow
 
+## Beginner Bridge
+
+Start from one service or one boundary. Then add the new control rule only where it is needed.
+
+### Before
 ```go
-type Task struct {
-    ID      int
-    OwnerID int
-    Title   string
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("draw the boundary before the implementation")
 }
 ```
 
-Authentication establishes trusted `actorID`. Authorization checks stored
-`OwnerID`.
+### After
+```go
+package main
 
-## Checkpoints
+import "fmt"
 
-1. Build API-key authentication mapping keys to user IDs.
-2. Store actor ID in request context.
-3. implement `GetTask(actorID, taskID)`.
-4. deny mismatched ownership.
-5. apply method and body-size limits.
-6. add per-identity request limiting.
-7. ensure credentials never appear in logs.
+func helper() string {
+    return "reduce trust and shrink the attack surface"
+}
 
-## Required Test Matrix
+func main() {
+    fmt.Println(helper())
+}
+```
 
-| Actor | Task owner | Expected |
-|---:|---:|---|
-| 1 | 1 | success |
-| 1 | 2 | denied |
-| 2 | 1 | denied |
-| none | any | 401 |
-| invalid key | any | 401 |
+## Worked Example
 
-Choose whether ownership mismatch returns 403 or privacy-preserving 404 and
-document the information-leak tradeoff.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Failure Drill
+### Example code
+```go
+package main
 
-Accept `ownerId` from request JSON and authorize using it. Demonstrate how actor
-1 submits owner 2. Then restore authorization from trusted stored data.
+import "fmt"
 
-## Done Means
+func main() {
+    fmt.Println("least privilege, explicit trust boundary, narrow surface")
+}
+```
 
-Changing path, query, body, or header resource IDs cannot grant access.
+### Expected output
+```text
+least privilege, explicit trust boundary, narrow surface
+```
 
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| least privilege | limits access |
+| boundary | separates trust |
+| surface | should stay small |
+
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
+
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

@@ -1,47 +1,102 @@
 # Project 15 - Architecture Review
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Audit a running project through execution, failure injection, and code-boundary
-inspection. Findings must cite evidence.
+## What You Are Learning
 
-Use project 14 or the PostgreSQL task capstone.
+- an architecture review checks coupling, failure modes, and ownership
+- the point is to catch risks before implementation
+- good review comments are specific and actionable
 
-## Review Procedure
+## Beginner Bridge
 
-1. Run all tests.
-2. Trace one successful write.
-3. trigger invalid input.
-4. trigger unauthorized access.
-5. trigger dependency timeout.
-6. trigger storage failure.
-7. hold a database lock.
-8. saturate the connection/worker pool.
-9. stop during an in-flight request.
-10. restore a backup to a separate target.
+Start from one service or one boundary. Then add the new control rule only where it is needed.
 
-## Inspect
+### Before
+```go
+package main
 
-- dependency direction
-- data ownership
-- transaction boundaries
-- parameterized SQL
-- external-call deadlines
-- secrets and log redaction
-- readiness/liveness behavior
-- migration compatibility
-- rollback procedure
-- alert actionability
+import "fmt"
 
-## Finding Format
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
+```
 
-Use `review-report.md`. Order findings by severity.
+### After
+```go
+package main
 
-Do not state that a control works unless it was executed or the exact
-unverified limitation is recorded.
+import "fmt"
 
-## Done Means
+func helper() string {
+    return "review coupling, failure mode, and ownership"
+}
 
-The report separates confirmed defects, untested risks, and passed checks, with
-commands and outputs for each.
+func main() {
+    fmt.Println(helper())
+}
+```
 
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("review coupling, failure mode, and ownership")
+}
+```
+
+### Expected output
+```text
+review coupling, failure mode, and ownership
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| coupling | shows hidden dependencies |
+| failure mode | shows what breaks |
+| ownership | shows who is responsible |
+
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
+
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

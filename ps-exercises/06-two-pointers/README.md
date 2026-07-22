@@ -1,69 +1,119 @@
 # Project 06 - Two Pointers
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Given a sorted slice and target, find two numbers whose sum equals the target.
+## What You Are Learning
 
-Input:
+- two pointers walk the data from one or both ends
+- the pointers move based on what the current pair tells you
+- the state is the gap between the pointers
 
-```text
-numbers = [1, 3, 4, 7, 10]
-target = 11
+## Beginner Bridge
+
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Output can be `1 + 10` or `4 + 7`, according to a documented first-match rule.
+### After
+```go
+package main
 
-## Algorithm
+import "fmt"
 
-Place one pointer at each end:
+func helper() string {
+    return "use two positions to narrow the work"
+}
 
-```text
-left = 0
-right = last index
-
-WHILE left < right
-    sum = numbers[left] + numbers[right]
-    IF sum equals target
-        return pair
-    IF sum is too small
-        move left rightward
-    ELSE
-        move right leftward
-return not found
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Why it works: the slice is sorted. If the sum is too small, keeping the smaller
-left value cannot help; move it upward. If too large, reduce the right value.
+## Worked Example
 
-## Trace
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-Target 11:
+### Example code
+```go
+package main
 
-| Left value | Right value | Sum | Action |
-|---:|---:|---:|---|
-| 1 | 10 | 11 | found |
+import "fmt"
 
-Target 8:
+func hasPair(nums []int, target int) bool {
+    left, right := 0, len(nums)-1
+    for left < right {
+        sum := nums[left] + nums[right]
+        if sum == target {
+            return true
+        }
+        if sum < target {
+            left++
+            continue
+        }
+        right--
+    }
+    return false
+}
 
-| Left | Right | Sum | Action |
-|---:|---:|---:|---|
-| 1 | 10 | 11 | right-- |
-| 1 | 7 | 8 | found |
+func main() {
+    nums := []int{1, 3, 4, 6}
+    fmt.Println(hasPair(nums, 7))
+}
+```
 
-## Complexity
+### Expected output
+```text
+true
+```
 
-Each pointer moves inward at most `n` times: `O(n)` time and `O(1)` extra space.
-The guarantee requires sorted input. Sorting first costs `O(n log n)` and may
-change index meaning.
+### Transfer the pattern, not the names
 
-## Tasks
+| In the example | In this exercise |
+|---|---|
+| left/right | move toward each other |
+| sum | decides which pointer moves |
+| return true | stops once the answer is found |
 
-1. return original values and found bool.
-2. test exact pair, no pair, duplicates, negatives, two values, empty.
-3. define whether one element can be reused; normally no.
-4. reject or document unsorted input.
+## Design / Reasoning Before Syntax
 
-## Done Means
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-You can explain which impossible pairs each pointer movement removes.
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
+## Your Program / Tasks
+
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
+
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

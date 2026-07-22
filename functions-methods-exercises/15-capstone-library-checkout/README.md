@@ -1,80 +1,140 @@
 # Exercise 15 - Capstone: Library Checkout
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Combine functions and methods in one small program.
+- the workflow combines calls, returns, methods, and errors
+- state must move through the program in the open
+- the final program is a chain of small, testable steps
 
-Build an in-memory library checkout model. The goal is to decide which behavior
-belongs on a type as a method and which behavior belongs in a separate function.
+## Beginner Bridge
 
-## Required Data
+Start from a plain function, loop, or handler. Then add the new syntax only where it is needed.
 
-Create:
+### Before
+```go
+package main
 
-- `Book` with ID, title, author, and checked-out state
-- `Member` with ID and name
-- `Library` with a slice of books
+import "fmt"
 
-## Required Methods
+func main() {
+    fmt.Println("library checkout flow")
+}
+```
 
-| Type | Method | Responsibility |
-|---|---|---|
-| `Book` | read-only summary method | describe one book |
-| `Book` | checkout-state method if appropriate | report whether it is available |
-| `Library` | add book | add a book to the library |
-| `Library` | find book by ID | find a book |
-| `Library` | check out book | mark one book checked out |
-| `Library` | return book | mark one book available |
-| `Library` | list available books | show available books |
+### After
+```go
+package main
 
-## Required Functions
+import "fmt"
 
-Create at least one plain function for behavior that does not naturally belong
-to one receiver. Examples:
+type Book struct {
+    Title string
+    Held  bool
+}
 
-- print a checkout receipt using both a member and a book
-- compare two books
-- print a report from a library and a member
+func (b *Book) Checkout() error {
+    if b.Held {
+        return fmt.Errorf("already checked out")
+    }
+    b.Held = true
+    return nil
+}
 
-## Main Requirements
+func main() {
+    book := &Book{Title: "Go in Practice"}
+    if err := book.Checkout(); err != nil {
+        fmt.Println(err)
+        return
+    }
+    fmt.Println(book.Held)
+}
+```
 
-In `main`:
+## Premade Helpers To Notice
 
-1. Create a library.
-2. Add at least four books.
-3. Create at least two members.
-4. List available books.
-5. Check out an available book.
-6. Try to check out the same book again.
-7. Return the book.
-8. Try to return a missing book.
-9. Print a final library report.
+- `fmt.Errorf` for the guard path when checkout fails
+- `len` or `append` if the project uses lists of items or holdings
+- `strings.TrimSpace` when user input needs cleanup before lookup
 
-## Constraints
+## Worked Example
 
-- Use methods for behavior owned by `Book` or `Library`.
-- Use a plain function for behavior that combines independent values.
-- Return booleans or errors for operations that can fail.
-- Do not use files, databases, HTTP, or maps.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Prove It Works
+### Example code
+```go
+package main
 
-Your output should prove:
+import "fmt"
 
-- books can be added
-- available books can be listed
-- checkout changes state
-- double checkout fails
-- return changes state back
-- missing book operations fail without crashing
+type Book struct {
+    Title string
+    Held  bool
+}
 
-## Completion Standard
+func (b *Book) Checkout() error {
+    if b.Held {
+        return fmt.Errorf("already checked out")
+    }
+    b.Held = true
+    return nil
+}
 
-You are done when you can explain every function and method choice:
+func main() {
+    book := &Book{Title: "equipment checkout"}
+    if err := book.Checkout(); err != nil {
+        fmt.Println(err)
+        return
+    }
+    fmt.Println(book.Held)
+}
+```
 
-- why it is a function or method
-- whether it reads or mutates state
-- what it returns on success
-- what it returns on failure
+### Expected output
+```text
+true
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| Book | holds state |
+| Checkout | mutates state and returns error |
+| main | wires the steps together |
+
+## Design / Reasoning Before Syntax
+
+1. Identify the data that moves between helpers.
+2. Decide whether the next step should return a value, return an error, or mutate a receiver.
+3. Write the helper that owns the rule, not the whole workflow.
+4. Wire the return value into the next call in `main`.
+5. Use a trace like: input -> helper one -> helper two -> printed result.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Work the concept without hiding the flow.
+2. Keep the wiring visible. Do not hide a value behind unrelated temporary state.
+3. Use the local quick reference for syntax, but keep the reasoning in this README.
+
+## Build In Checkpoints
+
+1. Write the smallest direct helper first.
+2. Add the next helper or receiver only after the data flow is visible.
+3. Print or return the value at the end, not in the middle.
+4. Check the behavior with one normal input and one boundary input.
+
+## Failure Drills
+
+1. Put the calculation inside the wrong helper. Why: the caller no longer sees the flow.
+2. Ignore a returned value and pretend the program still changed. Why: the value never moved.
+3. Choose a receiver form without checking whether the original state must change. Why: copy and mutation are not the same thing.
+
+## You Understand This When / Done Means
+
+- Can you explain why the value is stored, returned, or mutated in that exact place?
+- Can you trace the call chain without jumping over a helper?
+- Can you say which syntax feature owns the state change?

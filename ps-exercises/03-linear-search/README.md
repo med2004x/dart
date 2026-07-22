@@ -1,57 +1,112 @@
 # Project 03 - Linear Search
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Find a task by ID in an unsorted slice.
+## What You Are Learning
 
-## Algorithm
+- linear search checks items in order
+- it stops the moment it finds a match
+- you need a clear not-found branch
 
-Linear search checks items from beginning to end until one matches.
+## Beginner Bridge
 
-Pseudocode:
+Start from a direct loop or trace. Then add the pattern only where it is needed.
 
-```text
-FOR each task
-    IF task ID equals wanted ID
-        return task and true
-return empty task and false
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-## Trace
+### After
+```go
+package main
 
-IDs `[4, 9, 2]`, wanted `2`:
+import "fmt"
 
-| Step | Current ID | Match |
-|---:|---:|---|
-| 1 | 4 | no |
-| 2 | 9 | no |
-| 3 | 2 | yes, return |
+func helper() string {
+    return "scan in order and stop at the first match"
+}
 
-## When To Use It
+func main() {
+    fmt.Println(helper())
+}
+```
 
-Use linear search when:
+## Worked Example
 
-- input is small
-- data is not sorted
-- building another index is unnecessary
-- you search only once or rarely
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-Worst case visits all `n` tasks: `O(n)` time. Extra space is `O(1)`.
+### Example code
+```go
+package main
 
-## Tasks
+import "fmt"
 
-1. implement first match.
-2. test first, middle, last, and missing IDs.
-3. test empty input.
-4. define duplicate-ID behavior.
-5. write `findAllByStatus` to return multiple matches.
+func findSeat(seats []string, target string) int {
+    for i, seat := range seats {
+        if seat == target {
+            return i
+        }
+    }
+    return -1
+}
 
-## Failure Drill
+func main() {
+    seats := []string{"A1", "A2", "B1"}
+    fmt.Println(findSeat(seats, "B1"))
+}
+```
 
-Return failure inside the loop after the first nonmatch. Search for the last
-task and explain why it is never visited.
+### Expected output
+```text
+2
+```
 
-## Done Means
+### Transfer the pattern, not the names
 
-You can trace the exact number of comparisons for any input.
+| In the example | In this exercise |
+|---|---|
+| findSeat | scans in order |
+| return -1 | marks not found |
+| target | stops the search |
 
+## Design / Reasoning Before Syntax
+
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
+
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

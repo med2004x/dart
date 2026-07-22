@@ -1,69 +1,102 @@
 # Project 15 - API Engineering Capstone
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Build a project/task API whose contract, persistence, security, duplicate
-behavior, compatibility, and operational controls are proven.
+- the capstone combines contracts, validation, auth, jobs, and versioning
+- the API should be understandable from the outside first
+- every status code and error shape should serve the client
 
-## Required Operations
+## Beginner Bridge
 
-- project create/read/list
-- project membership management
-- task create/read/list/update/delete
-- task assignment
-- task completion event webhook
-- asynchronous project report
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
 
-## Required Engineering
+### Before
+```go
+package main
 
-- OpenAPI contract
-- separate request/response schemas
-- PostgreSQL constraints and migrations
-- stable errors
-- bounded bodies and page sizes
-- cursor pagination
-- create idempotency
-- ETag update preconditions
-- authentication and resource authorization
-- rate and concurrency limits
-- signed webhooks
-- asynchronous job lifecycle
-- request telemetry
-- graceful shutdown
-- backup/restore
+import "fmt"
 
-## Deliverables
-
-```text
-openapi.yaml
-migrations/
-cmd/api/
-internal/domain/
-internal/service/
-internal/postgres/
-internal/httpapi/
-tests/
-runbook.md
-compatibility.md
+func main() {
+    fmt.Println("write the contract, then the handler")
+}
 ```
 
-## Mandatory Failure Drills
+### After
+```go
+package main
 
-1. repeated create after lost response
-2. two stale concurrent updates
-3. cross-project task ID
-4. database timeout
-5. pool saturation
-6. webhook receiver failure
-7. worker restart
-8. migration with old server running
-9. shutdown during request
-10. restore into separate database
+import "fmt"
 
-## Done Means
+func helper() string {
+    return "combine contract, validation, auth, and jobs"
+}
 
-Every endpoint and background flow has a contract test, ownership check,
-failure policy, telemetry signal, and recovery procedure.
+func main() {
+    fmt.Println(helper())
+}
+```
 
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("combine contract, validation, auth, and async work")
+}
+```
+
+### Expected output
+```text
+combine contract, validation, auth, and async work
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| contract | defines the API |
+| validation | guards the boundary |
+| async work | handles slow jobs |
+
+## Design / Reasoning Before Syntax
+
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
+
+## Failure Drills
+
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
+
+## You Understand This When / Done Means
+
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

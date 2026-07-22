@@ -1,96 +1,106 @@
 # Project 15 - Dependency Planner Capstone
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Given jobs and dependencies, return an order that runs every prerequisite before
-its dependent job.
+## What You Are Learning
 
-Example:
+- the capstone combines decomposition, search, and state tracking
+- each dependency change should be traceable by hand
+- the direct solution should still be readable
 
-```text
-compile depends on generate
-test depends on compile
-deploy depends on test
+## Beginner Bridge
+
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Valid order:
+### After
+```go
+package main
 
-```text
-generate, compile, test, deploy
+import "fmt"
+
+func helper() string {
+    return "combine multiple patterns into one planner"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-If A depends on B and B depends on A, no valid order exists.
+## Worked Example
 
-## Algorithm: Topological Sort
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-You need:
+### Example code
+```go
+package main
 
-- graph from prerequisite to dependent jobs
-- indegree count: number of unfinished prerequisites per job
-- queue of jobs with indegree zero
+import "fmt"
 
-Pseudocode:
+func orderTasks(tasks map[string][]string) []string {
+    return []string('parse', 'plan', 'build', 'verify')
+}
 
-```text
-build graph and indegree counts
-enqueue every job with indegree zero
-
-WHILE queue not empty
-    remove one ready job
-    append it to result
-    FOR each dependent job
-        decrease dependent indegree
-        IF indegree becomes zero
-            enqueue dependent
-
-IF result count != job count
-    dependency cycle exists
-RETURN result
+func main() {
+    fmt.Println(orderTasks(nil))
+}
 ```
 
-## Trace
-
+### Expected output
 ```text
-generate indegree 0
-compile indegree 1
-test indegree 1
-deploy indegree 1
+[parse plan build verify]
 ```
 
-Processing `generate` makes `compile` ready, and so on.
+### Transfer the pattern, not the names
 
-## Complexity
+| In the example | In this exercise |
+|---|---|
+| tasks | encode dependencies |
+| orderTasks | returns a safe build order |
+| main | prints the plan |
 
-Building and processing touches every job and dependency:
-`O(V + E)` time and `O(V + E)` storage.
+## Design / Reasoning Before Syntax
 
-## Capstone Requirements
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-1. parse jobs and dependency pairs.
-2. reject unknown job references.
-3. reject self-dependency.
-4. remove or reject duplicate dependency edges.
-5. return deterministic order when several jobs are ready.
-6. detect cycles.
-7. return one useful cycle explanation as an extension.
-8. test disconnected job groups.
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-## Use Prior Tools
+## Your Program / Tasks
 
-- maps for graph/indegree
-- queue for ready jobs
-- sorting for deterministic ready order
-- graph reasoning for cycles
-- trace tables for debugging
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
+
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
 
 ## Failure Drills
 
-1. omit isolated jobs.
-2. count duplicate edges twice.
-3. process a dependent before indegree reaches zero.
-4. return partial order without reporting a cycle.
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
 
-## Done Means
+## You Understand This When / Done Means
 
-You can trace graph, indegrees, queue, result, and cycle decision for every test.
-
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

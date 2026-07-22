@@ -1,50 +1,140 @@
 # Exercise 13 - Method Sets
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Practice the difference between value receiver methods and pointer receiver
-methods when a value is used through an interface.
+- a value type and a pointer type do not always expose the same methods
+- interface satisfaction depends on the method set
+- receiver choice changes who can call the method
 
-## Required Interface
+## Beginner Bridge
 
-Create an interface for something that can be started and stopped.
+Start from a plain function, loop, or handler. Then add the new syntax only where it is needed.
 
-## Required Data
+### Before
+```go
+package main
 
-Create a `Service` type with:
+import "fmt"
 
-- name
-- running state
+type Note struct {
+    Text string
+}
 
-## Required Methods
+func main() {
+    note := Note{Text: "draft"}
+    fmt.Println(note.Text)
+}
+```
 
-| Method | Receiver kind | Responsibility |
-|---|---|---|
-| `Name` | value receiver | return service name |
-| `Running` | value receiver | return running state |
-| `Start` | pointer receiver | change running to true |
-| `Stop` | pointer receiver | change running to false |
+### After
+```go
+package main
 
-## Main Requirements
+import "fmt"
 
-In `main`:
+type Note struct {
+    Text string
+}
 
-1. Create one service value.
-2. Call read-only methods.
-3. Call mutating methods.
-4. Store the correct value form in an interface variable.
-5. Prove start and stop changed the original service.
+func (n Note) Preview() string {
+    return n.Text
+}
 
-## Constraints
+func (n *Note) Rename(text string) {
+    n.Text = text
+}
 
-- Use pointer receivers for mutating methods.
-- Do not hide state changes inside global variables.
-- Record what fails if you try to use the non-pointer value through the
-  interface.
+func main() {
+    note := Note{Text: "draft"}
+    fmt.Println(note.Preview())
+    note.Rename("final")
+    fmt.Println(note.Text)
+}
+```
 
-## Prove It Works
+## Premade Helpers To Notice
 
-Your output should show the service moving from stopped to running and back to
-stopped.
+- `fmt.Printf` to show which method is available from which type
+- `%T` if you want to print the concrete type during a demo
+- The main thing is the receiver form, not an extra helper.
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+type Note struct {
+    Text string
+}
+
+func (n Note) Preview() string {
+    return n.Text
+}
+
+func (n *Note) Rename(text string) {
+    n.Text = text
+}
+
+func main() {
+    note := Note{Text: "tool registry"}
+    fmt.Println(note.Preview())
+    note.Rename("final")
+    fmt.Println(note.Text)
+}
+```
+
+### Expected output
+```text
+tool registry
+final
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| Preview | value method |
+| Rename | pointer method |
+| main | shows the method set change |
+
+## Design / Reasoning Before Syntax
+
+1. Identify the data that moves between helpers.
+2. Decide whether the next step should return a value, return an error, or mutate a receiver.
+3. Write the helper that owns the rule, not the whole workflow.
+4. Wire the return value into the next call in `main`.
+5. Use a trace like: input -> helper one -> helper two -> printed result.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Work the concept without hiding the flow.
+2. Keep the wiring visible. Do not hide a value behind unrelated temporary state.
+3. Use the local quick reference for syntax, but keep the reasoning in this README.
+
+## Build In Checkpoints
+
+1. Write the smallest direct helper first.
+2. Add the next helper or receiver only after the data flow is visible.
+3. Print or return the value at the end, not in the middle.
+4. Check the behavior with one normal input and one boundary input.
+
+## Failure Drills
+
+1. Put the calculation inside the wrong helper. Why: the caller no longer sees the flow.
+2. Ignore a returned value and pretend the program still changed. Why: the value never moved.
+3. Choose a receiver form without checking whether the original state must change. Why: copy and mutation are not the same thing.
+
+## You Understand This When / Done Means
+
+- Can you explain why the value is stored, returned, or mutated in that exact place?
+- Can you trace the call chain without jumping over a helper?
+- Can you say which syntax feature owns the state change?

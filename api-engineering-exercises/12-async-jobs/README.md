@@ -1,57 +1,102 @@
 # Project 12 - Asynchronous Job APIs
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Turn a long report request into an explicit job lifecycle.
+- long work should move to a background job when the client cannot wait
+- the API needs a job resource or status endpoint
+- the response should tell the client what happens next
 
-## Contract
+## Beginner Bridge
 
-Create:
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
 
-```text
-POST /reports
--> 202 Accepted
-Location: /jobs/{jobId}
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("write the contract, then the handler")
+}
 ```
 
-Poll:
+### After
+```go
+package main
 
-```text
-GET /jobs/{jobId}
+import "fmt"
+
+func helper() string {
+    return "return a job ID and let the client poll"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-States:
+## Worked Example
 
-```text
-queued -> running -> succeeded
-                 `-> failed
-queued/running -> canceled
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("submit job, return job ID, poll status later")
+}
 ```
 
-## Checkpoints
+### Expected output
+```text
+submit job, return job ID, poll status later
+```
 
-1. define allowed state transitions.
-2. store job before returning 202.
-3. make create idempotent.
-4. let a bounded worker claim jobs.
-5. record attempts and error category.
-6. define cancellation semantics.
-7. expire old results.
-8. return result URL only after success.
-9. expose queue depth and oldest-job age.
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| job ID | tracks the background work |
+| status endpoint | shows progress |
+| queue | stores the work |
+
+## Design / Reasoning Before Syntax
+
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
 
 ## Failure Drills
 
-1. worker crashes after completing work but before marking success.
-2. client repeats create.
-3. cancellation arrives while work is finishing.
-4. producers exceed workers for ten minutes.
-5. result storage fails after job work.
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
 
-## Done Means
+## You Understand This When / Done Means
 
-Clients can determine accepted, running, failed, canceled, and completed states
-without holding one HTTP request open.
-
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

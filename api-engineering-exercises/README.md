@@ -1,79 +1,102 @@
-# API Design And Engineering Project Track
+# Project 08 - Concurrent Updates And Preconditions
 
-This track teaches APIs as contracts and operated systems, not collections of
-handlers.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Each project produces a runnable behavior or a reviewable contract. Complete
-them in order.
+## What You Are Learning
 
-Use the short [Quick Reference](QUICK-REFERENCE.md) when HTTP or Go handler
-syntax is unfamiliar. It gives generic examples and keeps the project-specific
-requirements here focused.
+- concurrent updates need a conflict rule
+- versions, timestamps, or locks protect shared state
+- the client must know when a write lost the race
 
-## Project Map
+## Beginner Bridge
 
-| Project | Main result |
-|---|---|
-| 01 Requirements | API problem brief |
-| 02 Resource Modeling | ownership and URL model |
-| 03 OpenAPI Contract | machine-readable contract |
-| 04 HTTP Semantics | correct methods and statuses |
-| 05 Validation And Errors | stable error behavior |
-| 06 Query Design | pagination/filter/sort contract |
-| 07 Idempotency | duplicate-safe creates |
-| 08 Concurrent Updates | conflict-safe writes |
-| 09 Authentication/Authorization | trusted identity and ownership |
-| 10 Rate Limits | controlled overload |
-| 11 Webhooks | signed, retryable events |
-| 12 Asynchronous Jobs | 202 and job lifecycle |
-| 13 Versioning | backward-compatible evolution |
-| 14 Verification/Operations | tests, telemetry, shutdown |
-| 15 Capstone | complete project/task API |
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
 
-## Work Method
+### Before
+```go
+package main
 
-For every project:
+import "fmt"
 
-1. Define the observable contract.
-2. List invalid and failure cases.
-3. Write examples before implementation.
-4. Implement the smallest behavior.
-5. Test at the HTTP boundary.
-6. Trigger dependency and overload failures.
-7. Record compatibility and security consequences.
+func main() {
+    fmt.Println("write the contract, then the handler")
+}
+```
 
-## Required API Evidence
+### After
+```go
+package main
 
+import "fmt"
+
+func helper() string {
+    return "reject stale writes with a version rule"
+}
+
+func main() {
+    fmt.Println(helper())
+}
+```
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("write with version check, reject stale updates")
+}
+```
+
+### Expected output
 ```text
-request.txt
-response.txt
-test-output.txt
-contract.yaml or contract.md
-failure-explanation.md
+write with version check, reject stale updates
 ```
 
-Never include real credentials or personal data.
+### Transfer the pattern, not the names
 
-## Commands
+| In the example | In this exercise |
+|---|---|
+| version | detects stale state |
+| conflict | signals a lost race |
+| client | must reload and retry |
 
-```powershell
-Set-Location C:\Users\pc\Documents\dart\api-engineering-exercises
-gofmt -w .
-go test ./...
-go vet ./...
-```
+## Design / Reasoning Before Syntax
 
-## Mastery Standard
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
 
-You can explain:
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-- who owns each resource and field
-- which client inputs are trusted
-- every method and status code
-- retry and duplicate behavior
-- pagination stability
-- concurrent update behavior
-- authentication versus authorization
-- compatibility policy
-- rate, errors, latency, and saturation evidence
+## Your Program / Tasks
 
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
+
+## Failure Drills
+
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
+
+## You Understand This When / Done Means
+
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

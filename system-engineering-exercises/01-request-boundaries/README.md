@@ -1,75 +1,102 @@
 # Project 01 - Request Boundaries
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Build an HTTP server where one request can be traced from client to handler and
-back. Learn to identify the last successful boundary before proposing a fix.
+- boundaries decide where failures are handled
+- transport code should translate requests into business calls
+- core logic should stay testable without HTTP
 
-## Starter
+## Beginner Bridge
 
-`main.go` provides:
+Start from one service or one boundary. Then add the new control rule only where it is needed.
 
-- `GET /health`
-- `GET /work`
-- one request log before the handler
-- a five-second server header timeout
+### Before
+```go
+package main
 
-Run:
+import "fmt"
 
-```powershell
-go run .
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
 ```
 
-Second terminal:
+### After
+```go
+package main
 
-```powershell
-curl.exe -i http://localhost:8080/health
-curl.exe -i http://localhost:8080/work
+import "fmt"
+
+func helper() string {
+    return "parse the request at the edge and keep core logic separate"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-## Checkpoints
+## Worked Example
 
-1. Add a generated request ID.
-2. Return it as `X-Request-ID`.
-3. Log request start and completion.
-4. Include method, path, status, and duration.
-5. Add `/fail?at=handler` returning 500.
-6. Add `/fail?at=dependency` simulating a dependency error.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Request Trace
+### Example code
+```go
+package main
 
-Complete with real function names:
+import "fmt"
 
+func main() {
+    fmt.Println("parse request at the edge, call core logic after")
+}
+```
+
+### Expected output
 ```text
-curl
--> TCP localhost:8080
--> http.Server
--> ServeMux
--> middleware
--> handler
--> response writer
--> curl
+parse request at the edge, call core logic after
 ```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| edge | translates transport |
+| core | stays testable |
+| boundary | owns failures |
+
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
 
 ## Failure Drills
 
-1. Stop the process and call `/health`.
-2. Call an unknown route.
-3. Occupy port 8080 with another process.
-4. Trigger each `/fail` mode.
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
 
-For each, record:
+## You Understand This When / Done Means
 
-- client output
-- server output
-- last confirmed boundary
-- root cause
-- correct owner of the fix
-
-## Done Means
-
-You can distinguish connection failure, routing failure, handler failure, and
-dependency failure from evidence.
-
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

@@ -1,47 +1,102 @@
 # Project 11 - Safe Deployments And Migrations
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Add task due dates while old and new application versions overlap and remain
-rollback-compatible.
+## What You Are Learning
 
-## Artifacts
+- safe deploys reduce blast radius
+- rollouts, health checks, and rollback rules need to be explicit
+- the deployment path should fail small
 
+## Beginner Bridge
+
+Start from one service or one boundary. Then add the new control rule only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
+```
+
+### After
+```go
+package main
+
+import "fmt"
+
+func helper() string {
+    return "roll out changes with canary and rollback rules"
+}
+
+func main() {
+    fmt.Println(helper())
+}
+```
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("canary, health check, rollback")
+}
+```
+
+### Expected output
 ```text
-migrations/
-    001_add_due_at.up.sql
-    001_add_due_at.down.sql
-compatibility-matrix.md
-deployment-plan.md
+canary, health check, rollback
 ```
 
-## Checkpoints
+### Transfer the pattern, not the names
 
-1. Add nullable `due_at`.
-2. Run old application queries.
-3. Run new application queries.
-4. Write new rows with and without due dates.
-5. Roll application code back.
-6. Backfill existing rows in bounded batches.
-7. Add stronger constraints only after old code is gone.
+| In the example | In this exercise |
+|---|---|
+| canary | limits blast radius |
+| health check | detects bad rollout |
+| rollback | restores the known good version |
 
-Apply through the PostgreSQL course container:
+## Design / Reasoning Before Syntax
 
-```powershell
-Get-Content -Raw .\migrations\001_add_due_at.up.sql |
-    docker exec -i postgres-course `
-    psql -X -v ON_ERROR_STOP=1 --single-transaction `
-    -U student -d go_course
-```
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
 
 ## Failure Drills
 
-1. Rename or drop a column used by old code.
-2. Hold a conflicting transaction and apply with a two-second lock timeout.
-3. Let one migration statement fail without `ON_ERROR_STOP`.
-4. Roll back application code after writing new-format data.
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
 
-## Done Means
+## You Understand This When / Done Means
 
-Forward schema deployment and application rollback are both proven.
-
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

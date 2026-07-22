@@ -1,42 +1,130 @@
 # Exercise 06 - Slice Parameters
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Practice functions that receive a slice and answer questions about the data.
+- values enter a function through parameters
+- parameter names are local to that function
+- input cleanup should happen before the real work starts
 
-These functions should read the slice, not change it.
+## Beginner Bridge
 
-## Required Functions
+Start from a plain function, loop, or handler. Then add the new syntax only where it is needed.
 
-| Function | Input | Return |
-|---|---|---|
-| `countItems` | slice of strings | number of items |
-| `totalScores` | slice of integers | sum of scores |
-| `highestScore` | slice of integers | highest score and found boolean |
-| `containsItem` | slice of strings, wanted item | found boolean |
+### Before
+```go
+package main
 
-## Main Requirements
+import (
+    "fmt"
+    "strings"
+)
 
-In `main`:
+func labelUser() string {
+    name := "  Mina  "
+    return strings.TrimSpace(name)
+}
 
-1. Create at least one string slice.
-2. Create at least one integer slice.
-3. Call every function.
-4. Test at least one empty slice case.
+func main() {
+    fmt.Println(labelUser())
+}
+```
 
-## Constraints
+### After
+```go
+package main
 
-- Do not modify the input slices.
-- Do not print inside these helper functions.
-- Return a boolean for cases where an empty slice means "no result."
+import (
+    "fmt"
+    "strings"
+)
 
-## Prove It Works
+func labelUser(raw string) string {
+    return strings.TrimSpace(raw)
+}
 
-Your output should prove:
+func main() {
+    raw := "  Mina  "
+    clean := labelUser(raw)
+    fmt.Println(clean)
+}
+```
 
-- count works for empty and non-empty slices
-- total works for multiple scores
-- highest score handles empty input
-- contains returns true and false in different cases
+## Premade Helpers To Notice
+
+- `strings.TrimSpace` to sanitize raw text before passing it onward
+- `strconv.Atoi` when a string must become a number
+- `fmt.Errorf` when bad input should become a useful error later
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+func labelUser(raw string) string {
+    return strings.TrimSpace(raw)
+}
+
+func main() {
+    raw := "  shopping basket  "
+    clean := labelUser(raw)
+    fmt.Println(clean)
+}
+```
+
+### Expected output
+```text
+shopping basket
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| raw string | enters through the parameter |
+| labelUser | owns the cleanup |
+| main | passes the value in |
+
+## Design / Reasoning Before Syntax
+
+1. Identify the data that moves between helpers.
+2. Decide whether the next step should return a value, return an error, or mutate a receiver.
+3. Write the helper that owns the rule, not the whole workflow.
+4. Wire the return value into the next call in `main`.
+5. Use a trace like: input -> helper one -> helper two -> printed result.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Work the concept without hiding the flow.
+2. Keep the wiring visible. Do not hide a value behind unrelated temporary state.
+3. Use the local quick reference for syntax, but keep the reasoning in this README.
+
+## Build In Checkpoints
+
+1. Write the smallest direct helper first.
+2. Add the next helper or receiver only after the data flow is visible.
+3. Print or return the value at the end, not in the middle.
+4. Check the behavior with one normal input and one boundary input.
+
+## Failure Drills
+
+1. Put the calculation inside the wrong helper. Why: the caller no longer sees the flow.
+2. Ignore a returned value and pretend the program still changed. Why: the value never moved.
+3. Choose a receiver form without checking whether the original state must change. Why: copy and mutation are not the same thing.
+
+## You Understand This When / Done Means
+
+- Can you explain why the value is stored, returned, or mutated in that exact place?
+- Can you trace the call chain without jumping over a helper?
+- Can you say which syntax feature owns the state change?

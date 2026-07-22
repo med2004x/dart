@@ -1,54 +1,102 @@
 # Project 08 - Concurrent Updates And Preconditions
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Prevent a stale client from silently overwriting a newer task version.
+- concurrent updates need a conflict rule
+- versions, timestamps, or locks protect shared state
+- the client must know when a write lost the race
 
-## Scenario
+## Beginner Bridge
 
-```text
-client A reads version 4
-client B reads version 4
-client A updates -> version 5
-client B sends stale version 4
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("write the contract, then the handler")
+}
 ```
 
-## Contract
+### After
+```go
+package main
 
-Response:
+import "fmt"
 
-```text
-ETag: "task-7-v4"
+func helper() string {
+    return "reject stale writes with a version rule"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Update request:
+## Worked Example
 
-```text
-If-Match: "task-7-v4"
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("write with version check, reject stale updates")
+}
 ```
 
-The repository updates only when stored version matches.
+### Expected output
+```text
+write with version check, reject stale updates
+```
 
-## Checkpoints
+### Transfer the pattern, not the names
 
-1. add integer task version.
-2. return ETag on reads.
-3. require `If-Match` on updates.
-4. parse only the documented ETag format.
-5. update with `WHERE id = ? AND version = ?`.
-6. increment version atomically.
-7. return 412 for stale precondition.
-8. test two concurrent writers.
+| In the example | In this exercise |
+|---|---|
+| version | detects stale state |
+| conflict | signals a lost race |
+| client | must reload and retry |
+
+## Design / Reasoning Before Syntax
+
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
 
 ## Failure Drills
 
-1. read then write without a version condition.
-2. trust a body version but ignore `If-Match` contract.
-3. return 200 after zero affected rows.
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
 
-## Done Means
+## You Understand This When / Done Means
 
-A stale client receives a conflict signal and cannot overwrite unseen changes.
-
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

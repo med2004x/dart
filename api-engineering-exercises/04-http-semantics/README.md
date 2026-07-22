@@ -1,45 +1,102 @@
 # Project 04 - HTTP Methods And Status Codes
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Implement method/path behavior where statuses carry accurate meaning.
+- methods, statuses, and headers carry meaning
+- the same path can mean different actions by method
+- read, create, replace, and delete should not blur together
 
-## Starter
+## Beginner Bridge
 
-The server exposes `/tasks` but returns 200 for every method. Correct it.
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
 
-## Required Behavior
+### Before
+```go
+package main
 
-| Method/path | Result |
+import "fmt"
+
+func main() {
+    fmt.Println("write the contract, then the handler")
+}
+```
+
+### After
+```go
+package main
+
+import "fmt"
+
+func helper() string {
+    return "match method, status, and headers to the action"
+}
+
+func main() {
+    fmt.Println(helper())
+}
+```
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("GET reads, POST creates, PUT replaces, PATCH edits")
+}
+```
+
+### Expected output
+```text
+GET reads, POST creates, PUT replaces, PATCH edits
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
 |---|---|
-| GET `/tasks` | 200 |
-| POST `/tasks` | 201 |
-| GET `/tasks/{id}` existing | 200 |
-| GET `/tasks/{id}` missing | 404 |
-| DELETE existing | 204 with no body |
-| unsupported method | 405 with `Allow` |
-| unknown route | 404 |
+| method | changes the meaning of the path |
+| status | tells the outcome |
+| header | carries metadata |
 
-## Checkpoints
+## Design / Reasoning Before Syntax
 
-1. route collections and items separately.
-2. distinguish malformed ID from missing ID.
-3. set headers/status before body.
-4. include `Location` on create.
-5. ensure 204 has no response body.
-6. write `httptest` cases for the table.
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
 
 ## Failure Drills
 
-1. encode body before `WriteHeader(201)`.
-2. return 404 for a known path with wrong method.
-3. return 200 containing an error message.
-4. send a body with 204.
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
 
-## Done Means
+## You Understand This When / Done Means
 
-A client can determine result category from method, status, and headers without
-parsing English text.
-
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

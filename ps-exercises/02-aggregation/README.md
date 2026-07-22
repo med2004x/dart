@@ -1,66 +1,111 @@
 # Project 02 - One-Pass Aggregation
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Given response times, return minimum, maximum, total, and average.
+## What You Are Learning
 
-## Algorithm
+- aggregation keeps running totals or extrema
+- one pass is enough when each item updates shared state
+- the accumulator is the algorithm
 
-Aggregation converts many values into a smaller summary.
+## Beginner Bridge
 
-Pseudocode:
+Start from a direct loop or trace. Then add the pattern only where it is needed.
 
-```text
-IF input is empty
-    return not-found
+### Before
+```go
+package main
 
-minimum = first value
-maximum = first value
-total = 0
+import "fmt"
 
-FOR each value
-    add value to total
-    IF value < minimum
-        minimum = value
-    IF value > maximum
-        maximum = value
-
-average = decimal total / count
-RETURN summary and found
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Initialize min/max from the first value, not zero. Zero is wrong for all-positive
-minimums and all-negative maximums.
+### After
+```go
+package main
 
-## Trace
+import "fmt"
 
-Input `[30, 10, 50]`:
+func helper() string {
+    return "accumulate a running total one item at a time"
+}
 
-| Value | Min | Max | Total |
-|---:|---:|---:|---:|
-| start | 30 | 30 | 0 |
-| 30 | 30 | 30 | 30 |
-| 10 | 10 | 30 | 40 |
-| 50 | 10 | 50 | 90 |
+func main() {
+    fmt.Println(helper())
+}
+```
 
-Average is 30.
+## Worked Example
 
-## Complexity
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-One pass: `O(n)` time. Fixed summary: `O(1)` extra space.
+### Example code
+```go
+package main
 
-## Tasks
+import "fmt"
 
-1. define a `Summary` struct.
-2. return `(Summary, bool)` for empty input.
-3. preserve decimal average.
-4. test one value, negatives, duplicates, empty input.
+func sumPrices(prices []int) int {
+    total := 0
+    for _, price := range prices {
+        total += price
+    }
+    return total
+}
 
-## Failure Drill
+func main() {
+    prices := []int{10, 20, 30}
+    fmt.Println(sumPrices(prices))
+}
+```
 
-Initialize min/max to zero and test `[10, 20]` and `[-20, -10]`.
+### Expected output
+```text
+60
+```
 
-## Done Means
+### Transfer the pattern, not the names
 
-You can derive and defend every initial accumulator value.
+| In the example | In this exercise |
+|---|---|
+| total | accumulates state |
+| loop | visits each item once |
+| return | hands back the aggregate |
 
+## Design / Reasoning Before Syntax
+
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
+
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

@@ -1,88 +1,102 @@
-# Systems Engineering Project Track
+# Project 14 - Systems Design Capstone
 
-This folder turns systems concepts into projects you can build, break, measure,
-and explain.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Do the projects in order. Each project adds one system responsibility while
-keeping the previous ones understandable.
+## What You Are Learning
 
-Use the short [Quick Reference](QUICK-REFERENCE.md) for the recurring Go and
-systems patterns. It is intentionally brief; each project README defines the
-actual experiment and evidence to produce.
+- the capstone combines boundaries, capacity, reliability, and deployment
+- tradeoffs matter more than slogans
+- the final design should be reviewable line by line
 
-## Working Method
+## Beginner Bridge
 
-For every project:
+Start from one service or one boundary. Then add the new control rule only where it is needed.
 
-1. Read its `README.md`.
-2. Write your prediction before running anything.
-3. Run the starter.
-4. Implement one checkpoint at a time.
-5. Trigger every required failure.
-6. Save sanitized evidence in an `evidence` directory.
-7. Explain the root cause and recovery.
+### Before
+```go
+package main
 
-Required evidence:
+import "fmt"
 
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
+```
+
+### After
+```go
+package main
+
+import "fmt"
+
+func helper() string {
+    return "combine boundaries, capacity, recovery, and deploys"
+}
+
+func main() {
+    fmt.Println(helper())
+}
+```
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("combine boundaries, capacity, recovery, and deploys")
+}
+```
+
+### Expected output
 ```text
-command.txt       exact command
-expected.txt      prediction
-actual.txt        observed result
-explanation.md    why the behavior occurred
+combine boundaries, capacity, recovery, and deploys
 ```
 
-Do not store credentials, API keys, personal data, or full production logs.
+### Transfer the pattern, not the names
 
-## Project Map
+| In the example | In this exercise |
+|---|---|
+| boundary | separates concerns |
+| capacity | sets the numbers |
+| recovery | handles failure |
 
-| Project | Build | Main proof |
-|---|---|---|
-| 01 Request Boundaries | instrumented HTTP server | locate a failure boundary |
-| 02 Requirements Capacity | capacity model | requirements become numbers |
-| 03 Modular Monolith | service/repository core | rules run without HTTP |
-| 04 Transactions Integrity | atomic repository | failed writes leave no state |
-| 05 Timeouts Retries | bounded HTTP client | dependency waits are bounded |
-| 06 Scaling Backpressure | limited worker server | overload is controlled |
-| 07 Consistency Events | outbox projection | delayed/duplicate events recover |
-| 08 Reliability Recovery | graceful server | in-flight work drains |
-| 09 Observability | structured request telemetry | one request is traceable |
-| 10 Security | ownership checks | client IDs cannot grant access |
-| 11 Safe Deployments | compatible migration | old and new code overlap |
-| 12 Architecture Decisions | measured ADR | design follows evidence |
-| 13 System Evolution | staged task system | complexity follows requirements |
-| 14 Design Capstone | complete vertical slice | happy and failure paths work |
-| 15 Architecture Review | executed audit | findings cite evidence |
+## Design / Reasoning Before Syntax
 
-## Commands
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
 
-Compile every Go starter:
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-```powershell
-Set-Location C:\Users\pc\Documents\dart\system-engineering-exercises
-go test ./...
-go vet ./...
-```
+## Your Program / Tasks
 
-Run one project:
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
 
-```powershell
-Set-Location .\01-request-boundaries
-go run .
-```
+## Build In Checkpoints
 
-Later projects may require PostgreSQL. Complete the corresponding projects in
-[`../postgresql-exercises`](../postgresql-exercises) first.
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
 
-## Mastery Standard
+## Failure Drills
 
-For each system, you must answer:
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
 
-- What user goal does it serve?
-- Which component owns each rule and datum?
-- What are the measurable capacity and reliability targets?
-- What happens when every dependency fails?
-- How is overload bounded?
-- Which signal identifies the failing boundary?
-- How is state recovered?
-- What evidence proves the answer?
+## You Understand This When / Done Means
 
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

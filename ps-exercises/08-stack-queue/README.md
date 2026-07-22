@@ -1,72 +1,110 @@
 # Project 08 - Stack And Queue
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Learn two data structures defined by removal order.
+## What You Are Learning
 
-## Stack: Last In, First Out
+- a stack is last in, first out
+- a queue is first in, first out
+- the order rule is the whole point
 
-Like plates:
+## Beginner Bridge
 
-```text
-push A
-push B
-pop -> B
-pop -> A
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Use a slice:
+### After
+```go
+package main
 
-```text
-push: append
-peek: last element
-pop: read last, shorten slice
+import "fmt"
+
+func helper() string {
+    return "choose stack or queue order on purpose"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Problem: validate brackets in `"([{}])"`.
+## Worked Example
 
-Algorithm:
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-```text
-FOR each character
-    IF opening bracket
-        push it
-    IF closing bracket
-        IF stack empty
-            invalid
-        pop opening bracket
-        IF pair does not match
-            invalid
-valid only if stack is empty
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    stack := []string{}
+    stack = append(stack, "first")
+    stack = append(stack, "second")
+    fmt.Println(stack[len(stack)-1])
+
+    queue := []string{"first"}
+    queue = append(queue, "second")
+    fmt.Println(queue[0])
+}
 ```
 
-## Queue: First In, First Out
-
-Like a service line:
-
+### Expected output
 ```text
-enqueue A
-enqueue B
-dequeue -> A
-dequeue -> B
+second
+first
 ```
 
-Problem: process jobs in arrival order.
+### Transfer the pattern, not the names
 
-## Complexity
+| In the example | In this exercise |
+|---|---|
+| stack | last in, first out |
+| queue | first in, first out |
+| append | adds to the container |
 
-Slice append/pop-at-end is normally `O(1)` amortized. Removing index zero by
-shifting can be `O(n)`. A queue can keep a head index or use a ring buffer.
+## Design / Reasoning Before Syntax
 
-## Tasks
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-1. implement bracket validator.
-2. implement queue with head index.
-3. test empty, mismatched, nested, early close, leftover open.
-4. test queue ordering and empty dequeue.
-5. compact consumed queue storage safely.
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-## Done Means
+## Your Program / Tasks
 
-You choose stack or queue by required removal order, not by name recognition.
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
 
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

@@ -1,55 +1,102 @@
 # Project 12 - Architecture Decisions
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Compare synchronous and asynchronous notification delivery using measured
-latency, failure behavior, and operating cost.
+## What You Are Learning
 
-## Experiment
+- architecture decisions should be written down with tradeoffs
+- a decision record is a memory aid, not decoration
+- the alternative matters as much as the choice
 
-Synchronous:
+## Beginner Bridge
 
-```text
-create task
-wait 500 ms for provider
-return
+Start from one service or one boundary. Then add the new control rule only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
 ```
 
-Asynchronous:
+### After
+```go
+package main
 
-```text
-create task and durable outbox entry
-return
-worker calls provider
+import "fmt"
+
+func helper() string {
+    return "record the choice, alternatives, and tradeoffs"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-## Checkpoints
+## Worked Example
 
-1. Implement the synchronous path.
-2. Measure 20 request latencies.
-3. Force provider failure.
-4. Implement the outbox path.
-5. Measure response and delivery latency separately.
-6. Force five provider failures.
-7. Observe backlog and retry behavior.
-8. Complete `ADR.md`.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Decision Inputs
+### Example code
+```go
+package main
 
-- API p95 target
-- notification delivery target
-- acceptable duplicate behavior
-- maximum backlog age
-- worker and queue operating cost
-- recovery from provider outage
+import "fmt"
 
-## Failure Drill
+func main() {
+    fmt.Println("decision, alternatives, tradeoffs, consequences")
+}
+```
 
-Stop the worker for five minutes while requests continue. Define the bound that
-prevents unlimited backlog growth.
+### Expected output
+```text
+decision, alternatives, tradeoffs, consequences
+```
 
-## Done Means
+### Transfer the pattern, not the names
 
-The ADR cites measured evidence and states what future evidence would reverse
-the decision.
+| In the example | In this exercise |
+|---|---|
+| decision | states the choice |
+| alternatives | record what was rejected |
+| tradeoffs | explain why |
 
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
+
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

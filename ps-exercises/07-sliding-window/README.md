@@ -1,72 +1,122 @@
 # Project 07 - Sliding Window
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Find the consecutive `k` days with the highest total sales.
+## What You Are Learning
 
-Input:
+- a sliding window keeps a bounded slice of the data in view
+- the window grows and shrinks as the loop moves forward
+- the important state is what enters and leaves the window
 
-```text
-sales = [4, 2, 7, 1, 8]
-k = 3
+## Beginner Bridge
+
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Windows:
+### After
+```go
+package main
 
-```text
-[4,2,7] total 13
-[2,7,1] total 10
-[7,1,8] total 16
+import "fmt"
+
+func helper() string {
+    return "move a bounded window across the data"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Result starts at index 2 with total 16.
+## Worked Example
 
-## Direct Solution
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-Calculate every window from scratch. There are roughly `n` windows and each
-adds `k` values: `O(n*k)`.
+### Example code
+```go
+package main
 
-## Sliding Window Algorithm
+import "fmt"
 
-Adjacent windows share most values:
+func maxWindowSum(nums []int, size int) int {
+    if size <= 0 || len(nums) < size {
+        return 0
+    }
+    sum := 0
+    for i := 0; i < size; i++ {
+        sum += nums[i]
+    }
+    best := sum
+    for right := size; right < len(nums); right++ {
+        sum += nums[right]
+        sum -= nums[right-size]
+        if sum > best {
+            best = sum
+        }
+    }
+    return best
+}
 
-```text
-new total = old total - value leaving + value entering
+func main() {
+    nums := []int{1, 4, 2, 6, 3}
+    fmt.Println(maxWindowSum(nums, 3))
+}
 ```
 
-Pseudocode:
-
+### Expected output
 ```text
-validate 1 <= k <= length
-sum first k values
-best = first sum
-best start = 0
-
-FOR right from k to last index
-    subtract value at right-k
-    add value at right
-    IF current total > best
-        update best and start
-RETURN start, best
+12
 ```
 
-## Complexity
+### Transfer the pattern, not the names
 
-First window costs `O(k)`, then each move costs `O(1)`: total `O(n)` time and
-`O(1)` extra space.
+| In the example | In this exercise |
+|---|---|
+| window size | bounds the active state |
+| sum | changes when one item enters and another leaves |
+| best | keeps the answer |
 
-## Tasks
+## Design / Reasoning Before Syntax
 
-1. implement valid-window behavior.
-2. return a clear failure for invalid `k`.
-3. define earliest-window tie behavior.
-4. test negatives, k=1, k=n, empty input.
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-## Failure Drill
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-Subtract the wrong leaving index and trace the first window where totals diverge.
+## Your Program / Tasks
 
-## Done Means
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
 
-You can name exactly which value enters and leaves at every step.
+## Build In Checkpoints
 
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

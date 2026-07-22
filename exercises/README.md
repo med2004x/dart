@@ -1,273 +1,298 @@
-# Go Programming From First Principles
+# Exercise 11 - JSON API
 
-This folder is a practical course for learning how programs work, not a list of
-syntax puzzles. The exercises begin with values in memory and end with an HTTP
-API split into clear layers.
+If a syntax item is unfamiliar, use the [track quick reference](../../GO-QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
 
-The goal is to move through three stages:
+## What You Are Learning
 
-1. **Hope:** "I wrote some code and it printed the right thing."
-2. **Reason:** "I can trace every value and explain why the result is right."
-3. **Control:** "I can predict failures, test them, and design a similar program."
-
-Running once is only stage one.
-
-Use the workspace [Go Quick Reference](../GO-QUICK-REFERENCE.md) when syntax is
-the blocker. It contains short generic examples and official documentation
-links; the exercise READMEs remain focused on requirements and proof cases.
-
-## Before Exercise 01
-
-Install Go, then verify the installation in PowerShell:
-
-```powershell
-go version
-go env GOROOT
-go env GOPATH
-```
-
-`go version` should print an installed Go version. `GOROOT` is where Go itself
-is installed. `GOPATH` is a workspace Go uses for downloaded tools and cached
-module data. Your project does not need to live inside `GOPATH`.
-
-Move into the exercise module and check that Go can see it:
-
-```powershell
-Set-Location C:\Users\pc\Documents\dart\exercises
-Get-Content .\go.mod
-go list ./...
-```
-
-The `go.mod` file names the module and records the Go language version. A module
-is a group of related Go packages. Each numbered directory in this course is a
-separate `main` package that can be run.
-
-## What Happens When You Run Go Code
-
-When you enter:
-
-```powershell
-Set-Location .\01-bank-account
-go run .
-```
-
-Go does not execute `main.go` line by line as raw text. It:
-
-1. Finds the module by looking for `go.mod`.
-2. Collects all `.go` files in the current directory that belong to the current
-   operating system and package.
-3. Parses the source code.
-4. Checks syntax, imports, names, and types.
-5. Compiles a temporary executable.
-6. Starts that executable at `main.main`.
-7. Deletes the temporary executable after it exits.
-
-That distinction explains two kinds of failure:
-
-- A **compile-time failure** means Go could not build the program. Examples:
-  misspelled names, wrong types, unused imports, and missing return values.
-- A **run-time failure** means the program compiled and started, then encountered
-  a bad state. Examples: dividing by zero, indexing outside a slice, or failing
-  to open a file.
-
-The compiler proving that code is legal does not prove that its behavior is
-correct. Tests and deliberate edge cases do that.
-
-## The Learning Loop
-
-Use the same loop for every exercise.
-
-### 1. Predict
-
-Before running code, write down:
-
-- the inputs
-- the expected output
-- the values that should change
-- the values that must not change
-- at least one invalid input
-
-### 2. Write pseudocode
-
-Pseudocode describes logic without Go syntax:
+This exercise turns an HTTP body into a typed Go value and turns a typed Go
+value back into an HTTP body:
 
 ```text
-FUNCTION find item by ID
-    FOR each item in the list
-        IF the item's ID equals the wanted ID
-            RETURN the item and true
-    RETURN an empty item and false
+request bytes -> JSON decoder -> Go struct
+Go struct     -> JSON encoder -> response bytes
 ```
 
-If the pseudocode is confused, Go syntax will not repair the design.
+An API is a contract. Field names, required values, methods, status codes, and
+error shapes are observable behavior, not implementation details.
 
-### 3. Translate one step at a time
+## Beginner Bridge: JSON Is The Wire Shape, Structs Are The Go Shape
 
-Write the smallest useful part, format it, compile it, and run it:
+Clients do not send Go structs. They send bytes. In this exercise, those bytes
+are JSON:
+
+```json
+{"username":"adam","role":"admin"}
+```
+
+Your handler converts those bytes into a Go value:
+
+```go
+var input createUserInput
+err := json.NewDecoder(r.Body).Decode(&input)
+```
+
+Then it converts a Go value back into JSON bytes:
+
+```go
+json.NewEncoder(w).Encode(user)
+```
+
+Similar APIs:
+
+| API | Input JSON | Go input struct |
+|---|---|---|
+| create book | title | `createBookInput` |
+| create user | username, role | `createUserInput` |
+| create note | text | `createNoteInput` |
+
+The main design rule: clients provide editable fields only. Server-owned fields
+such as IDs are created by the server, not trusted from the request body.
+
+## Model The Wire Format
+
+Incoming JSON:
+
+```json
+{"username":"adam","role":"admin"}
+```
+
+Go type:
+
+```go
+type User struct {
+    ID       int    `json:"id"`
+    Username string `json:"username"`
+    Role     string `json:"role"`
+}
+```
+
+Fields are exported so `encoding/json` can access them. Tags define exact JSON
+keys.
+
+Missing JSON fields receive Go zero values. `"username"` missing and
+`"username":""` both produce an empty string unless the API models presence
+separately. Validation must decide whether that is allowed.
+
+## Decode Requires A Destination Address
+
+```go
+var input createUserInput
+err := json.NewDecoder(r.Body).Decode(&input)
+```
+
+Execution:
+
+1. `input` starts with zero values.
+2. `&input` gives the decoder its memory address.
+3. The decoder reads request bytes from `r.Body`.
+4. Matching JSON fields replace fields in `input`.
+5. A syntax or type mismatch returns an error.
+
+Without `&`, the decoder cannot populate the caller's value.
+
+Use a separate input type when clients must not choose server-owned fields:
+
+```go
+type createUserInput struct {
+    Username string `json:"username"`
+    Role     string `json:"role"`
+}
+```
+
+Do not decode a client-supplied `id` and then pretend the server owns IDs.
+
+## Encode A Response
+
+Set headers and status before encoding:
+
+```go
+w.Header().Set("Content-Type", "application/json")
+w.WriteHeader(http.StatusCreated)
+if err := json.NewEncoder(w).Encode(user); err != nil {
+    // The response may already be partially committed; log the server error.
+}
+```
+
+For small exercises, the encode error is uncommon but still exists. Production
+handlers need a consistent response helper and logging policy.
+
+## Choose Status Codes Deliberately
+
+| Situation | Status |
+|---|---:|
+| successful read | 200 OK |
+| resource created | 201 Created |
+| empty or malformed client input | 400 Bad Request |
+| unsupported method on known path | 405 Method Not Allowed |
+| unexpected server failure | 500 Internal Server Error |
+
+Do not return `200` with an error message in the body. Clients should not parse
+English text to discover whether the operation failed.
+
+## Handler Pseudocode
+
+```text
+FUNCTION create user handler(response, request)
+    IF method is not POST
+        send 405 and stop
+
+    decode JSON into create-user input
+    IF decoding fails
+        send 400 and stop
+
+    trim and validate username
+    IF invalid
+        send 400 and stop
+
+    create server-owned user value
+    set Content-Type to application/json
+    set status 201
+    encode user as response JSON
+```
+
+Every failure branch returns immediately. Otherwise the handler may continue
+and attempt to send both failure and success responses.
+
+## Worked Example: Create A Book
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "log"
+    "net/http"
+    "strings"
+)
+
+type Book struct {
+    ID    int    `json:"id"`
+    Title string `json:"title"`
+}
+
+type createBookInput struct {
+    Title string `json:"title"`
+}
+
+func createBookHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        w.Header().Set("Allow", http.MethodPost)
+        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+
+    var input createBookInput
+    decoder := json.NewDecoder(r.Body)
+    decoder.DisallowUnknownFields()
+    if err := decoder.Decode(&input); err != nil {
+        http.Error(w, "invalid JSON", http.StatusBadRequest)
+        return
+    }
+
+    input.Title = strings.TrimSpace(input.Title)
+    if input.Title == "" {
+        http.Error(w, "title is required", http.StatusBadRequest)
+        return
+    }
+
+    book := Book{ID: 1, Title: input.Title}
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    if err := json.NewEncoder(w).Encode(book); err != nil {
+        log.Printf("encode book response: %v", err)
+    }
+}
+```
+
+`DisallowUnknownFields` catches misspelled keys such as `"titel"`. Whether an
+API should reject or ignore unknown fields is a contract decision.
+
+## Your Program
+
+Build:
+
+- `GET /health` returning `{"status":"ok"}`
+- `POST /users` accepting username and role
+- server-assigned ID 1
+- username validation
+- JSON response with status 201
+- 400 for malformed or invalid input
+- 405 for unsupported methods
+
+Storage is intentionally excluded. The goal is the JSON/HTTP contract.
+
+## Build In Checkpoints
+
+1. Encode a fixed struct to the response.
+2. Decode a valid request body and print the typed input.
+3. Return the decoded values in JSON.
+4. Add server-owned ID.
+5. Add malformed JSON and field validation paths.
+6. Add health JSON and method checks.
+
+Run:
 
 ```powershell
 gofmt -w .\main.go
 go run .
 ```
 
-`gofmt` gives Go code one standard layout. Formatting early makes missing braces
-and malformed blocks easier to see.
-
-### 4. Trace
-
-For a loop, make a table:
-
-| Iteration | Current value | State before | State after |
-|---:|---|---:|---:|
-| 1 | 4 | 0 | 4 |
-| 2 | 7 | 4 | 11 |
-| 3 | 2 | 11 | 13 |
-
-This is how you replace guessing with evidence.
-
-### 5. Break it deliberately
-
-Try empty input, zero, negative values, missing records, and malformed data.
-Predict each result before running it. If the program behaves differently, trace
-the first line where reality diverges from the prediction.
-
-### 6. Explain it without the editor
-
-You understand an exercise when you can explain:
-
-- what data exists and where it is stored
-- the type of every function input and output
-- which values are copies and which values can mutate shared state
-- every branch that can run
-- what happens for invalid input
-- why each imported package is needed
-
-## Reading Compiler Errors
-
-Read the first error first. Later errors are often consequences.
-
-Example:
-
-```text
-.\main.go:14:20: cannot use "10" (untyped string constant) as int value
-```
-
-Read it in parts:
-
-- `.\main.go`: file containing the problem
-- `14:20`: line 14, column 20
-- `cannot use "10"`: the value supplied
-- `as int value`: the type the surrounding code requires
-
-Do not randomly change nearby code. Go to the exact location, identify the
-actual and required types, and decide where conversion or a better value belongs.
-
-Useful diagnostic commands:
+Test from another window:
 
 ```powershell
-go run .
-go test ./...
-go vet ./...
-go doc fmt.Println
-go doc builtin.append
+$body = @{
+    username = "adam"
+    role = "admin"
+} | ConvertTo-Json
+
+Invoke-WebRequest `
+    -Uri http://localhost:8080/users `
+    -Method Post `
+    -ContentType "application/json" `
+    -Body $body
 ```
 
-`go vet` finds suspicious code that may compile. `go doc` explains packages,
-types, and functions from the terminal.
-
-## Exercise Map
-
-| Exercise | Main idea | New responsibility |
-|---|---|---|
-| 01 Bank Account | structs and methods | protect state changes |
-| 02 Auth Users | slices and search | report found/not found |
-| 03 Scoreboard | loops and arithmetic | aggregate safely |
-| 04 Expense Tracker | maps | group values by key |
-| 05 Contact Book | CRUD | design complete operations |
-| 06 Text Analyzer | strings and counting | normalize before comparing |
-| 07 File Notes | files and JSON | persist data and handle I/O failure |
-| 08 Errors and Validation | error values | separate rules from presentation |
-| 09 Payment Interfaces | interfaces | depend on required behavior |
-| 10 HTTP Basics | requests and responses | serve multiple clients |
-| 11 JSON API | encoding and status codes | define an API contract |
-| 12 CRUD API | routes and in-memory state | manage resources over HTTP |
-| 13 Middleware Auth | handler composition | apply cross-cutting policy |
-| 14 Service/Repository | layer boundaries | separate transport, rules, storage |
-| 15 Capstone | complete request flow | combine and defend the design |
-| 16 Product Catalog CRUD | slice CRUD repetition | make CRUD contracts automatic |
-| 17 Inventory CRUD Methods | method receivers | mutate owned state correctly |
-| 18 Notes CRUD With Errors | validation and errors | separate failure reasons |
-| 19 Map-Backed CRUD | maps as stores | compare direct lookup with slice search |
-| 20 CRUD Mini Project | combined CRUD design | choose methods, errors, and state ownership |
-
-The order matters. Later exercises assume the earlier ideas are ordinary.
-
-## What The README Must Do For You
-
-Each exercise README is supposed to teach the idea before asking you to code it.
-Use it in this order:
-
-1. Read the beginner explanation until you can say the concept in plain words.
-2. Read the pseudocode and trace table before touching Go syntax.
-3. Run the small checkpoints one at a time.
-4. Do the failure experiments on purpose.
-5. Only then move to the next exercise.
-
-Do not treat external Go documentation as the main teacher for these exercises.
-The docs are useful references, but the exercise README should give you the
-working mental model first: what the concept is, why it exists, what breaks, and
-how a similar program would use the same pattern.
-
-## PowerShell Reference
-
-From any exercise directory:
+Malformed JSON with native curl:
 
 ```powershell
-# Show files.
-Get-ChildItem
-
-# Read the current source.
-Get-Content .\main.go
-
-# Format all Go files in this directory.
-gofmt -w .
-
-# Compile and run the package.
-go run .
-
-# Build an executable without running it.
-go build .
-
-# Run all tests below the exercise module.
-Set-Location C:\Users\pc\Documents\dart\exercises
-go test ./...
+curl.exe -i -X POST http://localhost:8080/users `
+  -H "Content-Type: application/json" `
+  --data "{broken"
 ```
 
-For HTTP exercises, keep the server running in one PowerShell window and send
-requests from a second window:
+## Test Table
 
-```powershell
-Invoke-RestMethod -Uri http://localhost:8080/health
-```
+| Request | Expected |
+|---|---|
+| valid POST JSON | 201 and JSON user |
+| empty username | 400 |
+| missing username | 400 |
+| malformed JSON | 400 |
+| wrong JSON type, such as numeric username | 400 |
+| GET `/users` | 405 with `Allow: POST` |
+| GET `/health` | 200 and JSON |
 
-For status code and header details, use:
+## Failure Experiments
 
-```powershell
-Invoke-WebRequest -Uri http://localhost:8080/health
-```
+1. Make struct fields lowercase and inspect the response.
+2. Decode without `&input`. Read the decoder error.
+3. call `WriteHeader` after `Encode`. Inspect the resulting 200 status.
+4. Remove `return` after invalid JSON and observe the conflicting response path.
+5. Let the client submit an ID. Explain why that violates ownership.
 
-PowerShell aliases `curl` to different commands on some versions. Use
-`curl.exe` when you specifically want the native curl command.
+## Production Boundary
 
-## Rules For Getting Help
+Real handlers should limit body size, set read/write timeouts, use a stable JSON
+error format, avoid exposing internal errors, and test with `httptest`. Those
+controls come after the basic contract is understood.
 
-Bring evidence, not "it does not work." Include:
+## You Understand This Exercise When
 
-1. the command you ran
-2. the complete first error
-3. the input that triggered it
-4. the output you expected
-5. the output you received
-6. your current explanation of where the values diverge
+You can trace bytes into a struct and back, explain exported fields and tags,
+separate client-owned from server-owned fields, and defend every status code.
 
-That information turns debugging into a technical process.
+References:
+
+- [`encoding/json`](https://pkg.go.dev/encoding/json)
+- [`net/http`](https://pkg.go.dev/net/http)
+- [JSON and Go](https://go.dev/blog/json)

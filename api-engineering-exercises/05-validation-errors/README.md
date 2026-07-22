@@ -1,53 +1,102 @@
 # Project 05 - Validation And Error Contracts
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Reject malformed input at the HTTP boundary, enforce business rules in the
-service, and return one stable error format.
+- validation belongs at the boundary
+- clients need structured errors they can act on
+- bad input should fail fast and clearly
 
-## Error Shape
+## Beginner Bridge
 
-```json
-{
-  "error": "validation_failed",
-  "message": "request is invalid",
-  "requestId": "req-123",
-  "fields": {
-    "title": "title is required"
-  }
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("write the contract, then the handler")
 }
 ```
 
-Do not expose stack traces, SQL errors, file paths, or dependency secrets.
+### After
+```go
+package main
 
-## Checkpoints
+import "fmt"
 
-1. limit request body size.
-2. require JSON content type.
-3. reject malformed JSON.
-4. reject unknown fields.
-5. reject trailing second JSON value.
-6. validate required title.
-7. map known service errors.
-8. map unknown errors to generic 500.
-9. log internal error with request ID.
+func helper() string {
+    return "reject bad input before the handler continues"
+}
 
-## Failure Matrix
+func main() {
+    fmt.Println(helper())
+}
+```
 
-- empty body
-- malformed JSON
-- wrong JSON type
-- unknown field
-- missing title
-- whitespace title
-- oversized body
-- service not found
-- unexpected repository failure
+## Worked Example
 
-## Done Means
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-Every invalid request has deterministic status/body behavior and no internal
-detail leakage.
+### Example code
+```go
+package main
 
+import "fmt"
+
+func main() {
+    fmt.Println("return 400 with field-specific errors")
+}
+```
+
+### Expected output
+```text
+return 400 with field-specific errors
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| validation | runs at the boundary |
+| error response | helps the client fix input |
+| 400 | means the request was bad |
+
+## Design / Reasoning Before Syntax
+
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
+
+## Failure Drills
+
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
+
+## You Understand This When / Done Means
+
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

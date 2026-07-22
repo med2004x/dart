@@ -1,60 +1,111 @@
 # Project 11 - Merge Intervals
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Merge overlapping maintenance windows.
+## What You Are Learning
 
-Input:
+- interval problems compare start and end points
+- overlap rules decide whether to merge or split
+- sorted input makes the logic simpler
 
-```text
-[1,4], [3,6], [8,10]
+## Beginner Bridge
+
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Output:
+### After
+```go
+package main
 
-```text
-[1,6], [8,10]
+import "fmt"
+
+func helper() string {
+    return "trace the state change one step at a time"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-## Algorithm
+## Worked Example
 
-First sort intervals by start, then end.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-```text
-result = empty
-FOR each sorted interval
-    IF result empty OR interval starts after last result ends
-        append interval
-    ELSE
-        extend last result end to maximum of both ends
-RETURN result
+### Example code
+```go
+package main
+
+import "fmt"
+
+type Interval struct {
+    Start int
+    End   int
+}
+
+func overlaps(a, b Interval) bool {
+    return a.Start <= b.End && b.Start <= a.End
+}
+
+func main() {
+    fmt.Println(overlaps(Interval{1, 4}, Interval{3, 5}))
+}
 ```
 
-## Trace
+### Expected output
+```text
+true
+```
 
-| Current | Last result | Action | Result |
-|---|---|---|---|
-| [1,4] | none | append | [1,4] |
-| [3,6] | [1,4] | overlap, extend | [1,6] |
-| [8,10] | [1,6] | separate | [1,6],[8,10] |
+### Transfer the pattern, not the names
 
-Decide whether touching intervals such as `[1,3]` and `[3,5]` overlap. Time
-interval APIs often use half-open ranges `[start,end)` where they only touch.
+| In the example | In this exercise |
+|---|---|
+| Start/End | describe the range |
+| overlaps | checks the rule |
+| fmt.Println | shows the answer |
 
-## Complexity
+## Design / Reasoning Before Syntax
 
-Sorting dominates: `O(n log n)` time. The merge pass is `O(n)`. Output can hold
-`O(n)` intervals.
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-## Tasks
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-1. validate start <= end.
-2. avoid mutating caller input.
-3. define touching policy.
-4. test nested, equal, disjoint, unsorted, empty.
-5. return a clear validation error.
+## Your Program / Tasks
 
-## Done Means
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
 
-You can trace why only the last merged interval needs comparison after sorting.
+## Build In Checkpoints
 
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

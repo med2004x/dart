@@ -1,67 +1,102 @@
 # Project 09 - Observability
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Make one request traceable through structured logs and measurable through rate,
-errors, latency, and saturation.
+## What You Are Learning
 
-## Required Completion Log
+- logs, metrics, and traces answer different questions
+- good observability tells you what changed, where, and why
+- a system you cannot inspect is expensive to run
 
-```json
-{
-  "timestamp": "2026-06-29T12:00:00Z",
-  "level": "info",
-  "message": "request completed",
-  "requestId": "req-123",
-  "method": "GET",
-  "path": "/health",
-  "status": 200,
-  "durationMs": 4
+## Beginner Bridge
+
+Start from one service or one boundary. Then add the new control rule only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("draw the boundary before the implementation")
 }
 ```
 
-## Checkpoints
+### After
+```go
+package main
 
-1. Generate or validate one request ID.
-2. Return it in `X-Request-ID`.
-3. Capture actual response status.
-4. Log one JSON completion event.
-5. Add request/error counters and a latency histogram.
-6. Add active-request saturation.
-7. Expose a local `/metrics` JSON endpoint.
+import "fmt"
 
-## Analyze Logs
+func helper() string {
+    return "log, measure, and trace the path"
+}
 
-```powershell
-go run . 2> .\server.log
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Then:
+## Worked Example
 
-```powershell
-$events = Get-Content .\server.log |
-    ForEach-Object { $_ | ConvertFrom-Json }
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-$events |
-    Group-Object status |
-    Select-Object Name, Count
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("log the request, measure latency, trace the path")
+}
 ```
+
+### Expected output
+```text
+log the request, measure latency, trace the path
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| log | records events |
+| metric | summarizes trends |
+| trace | shows the path through services |
+
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
 
 ## Failure Drills
 
-Trigger:
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
 
-- 404
-- 405
-- recovered panic returning 500
-- slow request
-- invalid incoming request ID
+## You Understand This When / Done Means
 
-Never log API keys, tokens, passwords, or request bodies containing personal
-data.
-
-## Done Means
-
-A client response ID leads to exactly one completion event with status and
-duration, and the aggregate signals show the incident.
-
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

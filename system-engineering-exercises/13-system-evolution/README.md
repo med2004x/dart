@@ -1,73 +1,102 @@
 # Project 13 - Evolve A System In Stages
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Build four stages of one task system. Add complexity only when a new requirement
-proves the previous stage insufficient.
+## What You Are Learning
 
-## Stages
+- systems change in steps, not in one heroic rewrite
+- migration plans should keep the service alive while it changes
+- old and new shapes often coexist for a while
 
-```text
-stage1-cli-file/
-stage2-http-postgres/
-stage3-multi-instance/
-stage4-outbox-worker/
+## Beginner Bridge
+
+Start from one service or one boundary. Then add the new control rule only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
 ```
 
-## Required Proof
+### After
+```go
+package main
 
-Stage 1:
+import "fmt"
 
-```text
-one local user
-tasks survive restart
-corrupt file fails safely
+func helper() string {
+    return "migrate one boundary at a time"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Stage 2:
+## Worked Example
 
-```text
-concurrent HTTP clients
-shared PostgreSQL state
-constraints and transactions
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("migrate one boundary at a time")
+}
 ```
 
-Stage 3:
-
+### Expected output
 ```text
-two application processes on different ports
-both see the same tasks
-readiness controls traffic
-pool budget covers both
+migrate one boundary at a time
 ```
 
-Stage 4:
+### Transfer the pattern, not the names
 
-```text
-notification provider is outside create-task latency
-outbox survives worker restart
-duplicate delivery is safe
-```
+| In the example | In this exercise |
+|---|---|
+| migration | changes one slice of the system |
+| boundary | keeps the change contained |
+| old/new coexistence | buys safety |
 
-## For Every Stage
+## Design / Reasoning Before Syntax
 
-Complete one copy of `stage-template.md`:
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
 
-- triggering requirement
-- diagram
-- commands
-- success evidence
-- failure evidence
-- new operational burden
-- migration path
-- rollback path
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-## Rule
+## Your Program / Tasks
 
-Do not start a later stage until the current stage's proof is executable.
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
 
-## Done Means
+## Build In Checkpoints
 
-Every added process or storage system solves one requirement the previous stage
-could not meet.
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
 
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

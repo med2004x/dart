@@ -1,63 +1,132 @@
 # Project 10 - Binary Search
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Find a target ID in a sorted slice.
+## What You Are Learning
 
-## Prerequisite
+- binary search halves a sorted range
+- the middle choice decides which side to keep
+- the range is the state, not the whole list
 
-Binary search requires sorted input. If input is unsorted, the movement logic is
-invalid.
+## Beginner Bridge
 
-## Algorithm
+Start from a direct loop or trace. Then add the pattern only where it is needed.
 
-Compare with the middle value and discard half:
+### Before
+```go
+package main
 
-```text
-low = 0
-high = last index
+import "fmt"
 
-WHILE low <= high
-    middle = low + (high-low)/2
-    IF middle value equals target
-        return middle
-    IF middle value < target
-        low = middle + 1
-    ELSE
-        high = middle - 1
-return not found
+func main() {
+    fmt.Println("scan the list in order first")
+}
 ```
 
-## Trace
+### After
+```go
+package main
 
-IDs `[2, 4, 7, 9, 12]`, target 9:
+import "fmt"
 
-| Low | High | Middle | Value | Action |
-|---:|---:|---:|---:|---|
-| 0 | 4 | 2 | 7 | low=3 |
-| 3 | 4 | 3 | 9 | found |
+func binarySearch(nums []int, target int) int {
+    left, right := 0, len(nums)-1
+    for left <= right {
+        mid := left + (right-left)/2
+        if nums[mid] == target {
+            return mid
+        }
+        if nums[mid] < target {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+    return -1
+}
 
-## Complexity
+func main() {
+    nums := []int{2, 4, 6, 8, 10}
+    fmt.Println(binarySearch(nums, 8))
+}
+```
 
-Each comparison halves remaining candidates: `O(log n)` time and `O(1)` extra
-space for iterative implementation.
+## Worked Example
 
-For 1,024 sorted items, at most about 11 checks are needed.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Tasks
+### Example code
+```go
+package main
 
-1. return index and found.
-2. test first/last/middle/missing/empty.
-3. define duplicate behavior.
-4. implement first occurrence of duplicates.
-5. compare comparison counts with linear search.
+import "fmt"
 
-## Failure Drill
+func binarySearch(nums []int, target int) int {
+    left, right := 0, len(nums)-1
+    for left <= right {
+        mid := left + (right-left)/2
+        if nums[mid] == target {
+            return mid
+        }
+        if nums[mid] < target {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+    return -1
+}
 
-Use `low < high` and test a one-element remaining range. Forget `+1`/`-1` and
-observe an infinite loop.
+func main() {
+    nums := []int{2, 4, 6, 8, 10}
+    fmt.Println(binarySearch(nums, 8))
+}
+```
 
-## Done Means
+### Expected output
+```text
+3
+```
 
-You can trace low, high, middle, and discarded range at every iteration.
+### Transfer the pattern, not the names
 
+| In the example | In this exercise |
+|---|---|
+| left/right | bound the searchable range |
+| mid | splits the range |
+| return -1 | marks not found |
+
+## Design / Reasoning Before Syntax
+
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
+
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

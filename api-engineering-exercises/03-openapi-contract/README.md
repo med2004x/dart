@@ -1,41 +1,108 @@
 # Project 03 - OpenAPI Contract
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Describe one API operation in a machine-readable OpenAPI document before
-implementation.
+- OpenAPI turns the contract into a machine-readable file
+- schemas and paths must agree with each other
+- the spec should match the brief exactly
 
-## Starter
+## Beginner Bridge
 
-`openapi.yaml` contains a health endpoint and a task schema placeholder.
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
 
-## Checkpoints
+### Before
+```text
+GET /notes returns a list of notes
+```
 
-1. define `POST /projects/{projectId}/tasks`.
-2. define path parameter.
-3. define request body.
-4. mark required fields.
-5. define 201 response.
-6. define reusable 400, 401, 404, and 500 errors.
-7. add examples for every response.
-8. define `GET` collection behavior.
+### After
+```yaml
+openapi: 3.1.0
+info:
+  title: Notes API
+  version: 1.0.0
+paths:
+  /notes:
+    get:
+      summary: list notes
+      responses:
+        '200':
+          description: ok
+```
 
-## Contract Rules
+## Worked Example
 
-- request and response schemas are different when ownership differs
-- timestamps state format and timezone semantics
-- nullable and optional are not the same
-- every non-2xx response has a stable body
-- examples must satisfy schemas
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Failure Drill
+### Example code
+```yaml
+openapi: 3.1.0
+info:
+  title: Coffee Orders API
+  version: 1.0.0
+paths:
+  /orders/{id}:
+    get:
+      summary: fetch one order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: order found
+        '404':
+          description: order missing
+```
 
-Add a field to an example but not its schema. Then add an undocumented 409 from
-the implementation. Explain why clients cannot rely on undocumented behavior.
+### Expected output
+```text
+an OpenAPI document with one path, one parameter, and two responses
+```
 
-## Done Means
+### Transfer the pattern, not the names
 
-The contract is sufficient to build a client mock without reading server code.
+| In the example | In this exercise |
+|---|---|
+| paths | name operations |
+| responses | name observable results |
+| schema | describes the shape |
 
+## Design / Reasoning Before Syntax
+
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
+
+## Failure Drills
+
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
+
+## You Understand This When / Done Means
+
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

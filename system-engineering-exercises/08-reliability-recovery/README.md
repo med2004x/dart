@@ -1,50 +1,102 @@
 # Project 08 - Reliability And Recovery
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Implement separate liveness/readiness behavior and drain in-flight work during
-shutdown.
+## What You Are Learning
 
-## Starter
+- recovery plans matter after the failure, not before the slide deck
+- backups, retries, and restores need proof
+- the system should be able to rebuild lost state
 
-The server provides:
+## Beginner Bridge
 
-- `/health`
-- `/ready`
-- `/slow`
+Start from one service or one boundary. Then add the new control rule only where it is needed.
 
-It currently exits through the default server path without graceful shutdown.
+### Before
+```go
+package main
 
-## Checkpoints
+import "fmt"
 
-1. Track readiness with an atomic boolean.
-2. Register `os.Interrupt` with `signal.NotifyContext`.
-3. Mark readiness false before shutdown.
-4. call `Server.Shutdown` with a five-second deadline.
-5. Let the two-second `/slow` request finish.
-6. Log shutdown start, drain result, and total duration.
-7. Add a fake dependency readiness flag.
-
-## Manual Test
-
-Start `/slow` from one terminal:
-
-```powershell
-curl.exe -i http://localhost:8083/slow
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
 ```
 
-Press `Ctrl+C` in the server terminal before it completes.
+### After
+```go
+package main
 
-## Failure Drill
+import "fmt"
 
-Replace graceful shutdown with immediate `os.Exit(1)`. Repeat the in-flight
-request and record the client behavior.
+func helper() string {
+    return "prove the backup and restore path"
+}
 
-Then mark liveness unhealthy whenever the fake dependency fails. Explain why
-restarting this process cannot repair the dependency.
+func main() {
+    fmt.Println(helper())
+}
+```
 
-## Done Means
+## Worked Example
 
-The service stops receiving new traffic and drains bounded in-flight work before
-exit.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("backup, restore, verify")
+}
+```
+
+### Expected output
+```text
+backup, restore, verify
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| backup | saves state |
+| restore | brings it back |
+| verify | proves the restore works |
+
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
+
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

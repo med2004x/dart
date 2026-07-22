@@ -1,109 +1,58 @@
-# PostgreSQL And SQL Project Track
+# Project 12 - Data Modeling And Normalization
 
-This folder teaches relational databases through one evolving project/task
-database. It is cumulative: each numbered project assumes the previous project
-is complete.
+If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
 
-Use the short [Quick Reference](QUICK-REFERENCE.md) when SQL syntax is
-unfamiliar. It covers the recurring statement shapes and links to the official
-PostgreSQL documentation.
+## Goal
 
-## What You Build
+Model an order system so each fact has one owner and historical facts remain
+reproducible.
+
+## Domain
+
+Design:
 
 ```text
-users
-`-- projects
-    `-- tasks
-        `-- task_tags -- tags
+customers
+products
+orders
+order_items
+payment_attempts
 ```
 
-Later projects add accounts, transactions, concurrency tests, indexes,
-migrations, restricted roles, backup/restore, and a Go repository.
+Requirements:
 
-## Local PostgreSQL
+- product price can change
+- order item preserves charged unit price
+- order contains multiple products
+- product can appear in multiple orders
+- payment can be attempted more than once
+- order total must be reproducible later
 
-The track uses the official PostgreSQL 18 container image pinned in
-`docker-compose.yml`.
+## Deliverables
 
-Prerequisites:
+1. `model.md` defining every fact.
+2. `schema.sql`.
+3. primary/foreign/unique/check constraints.
+4. sample data.
+5. query reconstructing one invoice.
+6. deletion and retention policy.
 
-```powershell
-docker version
-docker compose version
-```
+## Design Questions
 
-Start:
+- Why is `order_items.unit_price` not accidental duplication?
+- Which status values are valid?
+- Can products be deleted after sale?
+- Which timestamp records each business event?
+- Which totals are calculated versus stored?
 
-```powershell
-Set-Location C:\Users\pc\Documents\dart\postgresql-exercises
-docker compose up -d
-docker compose logs postgres
-```
+## Failure Drills
 
-Connect:
+1. store product IDs comma-separated in orders.
+2. store only current product price.
+3. use customer email as every foreign key.
+4. duplicate order total without a consistency policy.
 
-```powershell
-.\scripts\connect.ps1
-```
+## Done Means
 
-Run an SQL file and stop on the first error:
-
-```powershell
-.\scripts\run-sql.ps1 .\02-schema-types\schema.sql
-```
-
-Stop without deleting data:
-
-```powershell
-docker compose stop
-```
-
-The named volume persists data. Do not delete it unless you deliberately want a
-fresh course database.
-
-## Project Map
-
-| Project | Main skill |
-|---|---|
-| 01 Server And psql | connect and inspect |
-| 02 Schema And Types | model tables |
-| 03 Insert And Select | create/read rows |
-| 04 Update And Delete | mutate safely |
-| 05 Constraints | reject invalid state |
-| 06 Relationships And Joins | reconstruct related data |
-| 07 Aggregations | build reports |
-| 08 Advanced Queries | NULL, CTEs, windows |
-| 09 Transactions | make writes atomic |
-| 10 Concurrency And Locks | observe overlapping work |
-| 11 Indexes And EXPLAIN | optimize measured queries |
-| 12 Data Modeling | normalize real domains |
-| 13 Migrations | evolve without breaking code |
-| 14 Roles And Security | least privilege and parameters |
-| 15 Backup And Restore | prove recovery |
-| 16 Go Repository | use `database/sql` correctly |
-| 17 Task API Capstone | complete PostgreSQL backend |
-
-## Exercise Method
-
-Every project includes:
-
-- focused `README.md`
-- starter SQL or Go artifacts
-- verification queries
-- deliberate failure cases
-- a completion standard
-
-Before every mutation:
-
-1. predict affected rows
-2. select the target rows
-3. run inside a transaction while learning
-4. inspect returned/affected rows
-5. commit only after verification
-
-## Security Boundary
-
-The included credentials are local course credentials. They are not production
-examples. Production systems require secret management, TLS, restricted
-networking, monitored backups, and role separation.
+Changing current product/customer data cannot corrupt a historical invoice.
 

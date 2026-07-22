@@ -1,59 +1,111 @@
 # Project 04 - Frequency Maps
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Count support tickets by status and return the most common status.
+## What You Are Learning
 
-## Algorithm
+- a map can count how many times each value appears
+- the key stores the thing you care about
+- the value stores the running count or summary
 
-A frequency map stores:
+## Beginner Bridge
 
-```text
-value -> number of times seen
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Pseudocode:
+### After
+```go
+package main
 
-```text
-counts = empty map
-FOR each status
-    counts[status] = counts[status] + 1
-RETURN counts
+import "fmt"
+
+func helper() string {
+    return "count repeated values with a map"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Then scan the map to find the largest count.
+## Worked Example
 
-## Trace
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-Input `[open, done, open]`:
+### Example code
+```go
+package main
 
-| Status | Counts after |
+import "fmt"
+
+func countVotes(names []string) map[string]int {
+    counts := make(map[string]int)
+    for _, name := range names {
+        counts[name]++
+    }
+    return counts
+}
+
+func main() {
+    names := []string{"Ana", "Bo", "Ana"}
+    fmt.Println(countVotes(names))
+}
+```
+
+### Expected output
+```text
+map[Ana:2 Bo:1]
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
 |---|---|
-| open | open:1 |
-| done | open:1, done:1 |
-| open | open:2, done:1 |
+| map key | holds the thing being counted |
+| map value | holds the running count |
+| ++ | updates in one pass |
 
-## Complexity
+## Design / Reasoning Before Syntax
 
-Average map insert/lookup is treated as `O(1)`. Counting `n` values is `O(n)`
-time. If there are `k` distinct statuses, extra space is `O(k)`.
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-Map iteration order is not guaranteed. Define a tie rule for "most common."
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-## Tasks
+## Your Program / Tasks
 
-1. normalize status case/whitespace.
-2. count frequencies.
-3. return most common and count.
-4. choose alphabetical tie-break.
-5. test empty input and ties.
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
 
-## Failure Drill
+## Build In Checkpoints
 
-Replace `+=` with `=` and show why repeats are lost. Use map iteration order as
-a tie rule and observe nondeterminism.
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
 
-## Done Means
+## Failure Drills
 
-You can distinguish raw input count from number of distinct keys.
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
 
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

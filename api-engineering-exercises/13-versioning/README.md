@@ -1,51 +1,102 @@
 # Project 13 - API Evolution And Compatibility
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Add task due dates without breaking existing clients.
+- versioning keeps old clients from breaking
+- a version rule should be obvious from the path or headers
+- changing the contract should be deliberate
 
-## Compatibility Questions
+## Beginner Bridge
 
-- Is adding an optional response field safe for all clients?
-- Can a field become required?
-- Can enum values expand?
-- Can status codes change?
-- Can pagination defaults change?
-- Can field meaning change while name stays?
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
 
-## Checkpoints
+### Before
+```go
+package main
 
-1. complete `compatibility-matrix.md`.
-2. add optional `dueAt`.
-3. keep old requests valid.
-4. make new clients tolerate missing dueAt.
-5. write old/new contract tests.
-6. add deprecation documentation.
-7. define usage measurement.
-8. define removal criteria and date.
+import "fmt"
 
-## Versioning Options
+func main() {
+    fmt.Println("write the contract, then the handler")
+}
+```
 
-- compatible evolution without new version
-- path version
-- media type/version header
-- separate operation/resource
+### After
+```go
+package main
 
-Do not create a new major version for every additive field. Do not hide breaking
-changes under the old contract.
+import "fmt"
+
+func helper() string {
+    return "keep old clients working while the shape changes"
+}
+
+func main() {
+    fmt.Println(helper())
+}
+```
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("/v1 and /v2 are different contracts")
+}
+```
+
+### Expected output
+```text
+/v1 and /v2 are different contracts
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| version | names the contract shape |
+| route | routes clients to the right shape |
+| change | must be deliberate |
+
+## Design / Reasoning Before Syntax
+
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
 
 ## Failure Drills
 
-1. make an optional request field required.
-2. remove an existing response field.
-3. change ID from number to string.
-4. add an enum value to a client using exhaustive matching.
-5. change 404 to 200 with null body.
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
 
-## Done Means
+## You Understand This When / Done Means
 
-Old and new clients have executable compatibility tests and a clear migration
-window.
-
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

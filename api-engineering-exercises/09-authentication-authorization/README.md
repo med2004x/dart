@@ -1,52 +1,102 @@
 # Project 09 - Authentication And Authorization
 
-If a syntax item is unfamiliar, use the [track quick reference](../QUICK-REFERENCE.md). It contains a generic example and official documentation without solving this project.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-## Goal
+## What You Are Learning
 
-Separate identity verification from permission checks on each resource.
+- authentication asks who the client is
+- authorization asks what the client may do
+- ownership rules must be enforced separately
 
-## Definitions
+## Beginner Bridge
 
-Authentication:
+Start from a plain HTTP handler or request struct. Then add the new contract rule only where it is needed.
 
-```text
-Who is calling?
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("write the contract, then the handler")
+}
 ```
 
-Authorization:
+### After
+```go
+package main
 
-```text
-May this caller perform this operation on this stored resource?
+import "fmt"
+
+func helper() string {
+    return "separate identity from permission"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-## Checkpoints
+## Worked Example
 
-1. validate API key or signed token.
-2. place trusted actor identity in context.
-3. load task and project ownership from storage.
-4. check project membership and role.
-5. define owner/member/viewer capabilities.
-6. apply checks before returning protected data.
-7. test cross-tenant IDs.
-8. avoid logging credentials.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Required Matrix
+### Example code
+```go
+package main
 
-| Role | Read | Create | Update | Delete | Invite |
-|---|---|---|---|---|---|
-| owner | | | | | |
-| member | | | | | |
-| viewer | | | | | |
+import "fmt"
+
+func main() {
+    fmt.Println("401 means unauthenticated, 403 means authenticated but not allowed")
+}
+```
+
+### Expected output
+```text
+401 means unauthenticated, 403 means authenticated but not allowed
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| authentication | checks identity |
+| authorization | checks permission |
+| ownership | decides the allowed scope |
+
+## Design / Reasoning Before Syntax
+
+1. Write the request the client sends.
+2. Write the response the client should observe.
+3. Choose the boundary checks that protect the handler.
+4. Decide which status code describes each outcome.
+5. Keep the contract and the code in lockstep.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Describe the contract, then make the HTTP shape match it.
+2. Write the observable request and response first.
+3. Keep transport details separate from the business meaning.
+
+## Build In Checkpoints
+
+1. Name the resource and the action before writing the handler.
+2. Choose the status code and response shape before the implementation.
+3. Add one success path and one failure path.
+4. Check that the boundary behavior matches the contract exactly.
 
 ## Failure Drills
 
-1. authorize from `ownerId` in request body.
-2. check authentication but no ownership.
-3. return resource details before permission failure.
-4. trust unsigned token payload.
+1. Return 200 for everything. Why: the client cannot tell success from failure.
+2. Blend validation, auth, and storage together. Why: the contract becomes unreadable.
+3. Hide a breaking change inside the path or body. Why: old clients will fail with no warning.
 
-## Done Means
+## You Understand This When / Done Means
 
-Changing any client-controlled ID cannot cross tenant boundaries.
-
+- Can you state the contract in one sentence?
+- Can you point to the exact method, status, or field that proves each branch?
+- Can you explain why a client would trust this API shape?

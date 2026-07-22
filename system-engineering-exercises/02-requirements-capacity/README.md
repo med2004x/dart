@@ -1,56 +1,102 @@
 # Project 02 - Requirements And Capacity
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Turn vague product language into measurable traffic, storage, latency, and
-recovery requirements before choosing architecture.
+## What You Are Learning
 
-## Starter
+- requirements can be turned into load, latency, and storage numbers
+- capacity work is mostly assumptions made explicit
+- the answer needs a measurable basis
 
-Run:
+## Beginner Bridge
 
-```powershell
-.\capacity.ps1
+Start from one service or one boundary. Then add the new control rule only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("draw the boundary before the implementation")
+}
 ```
 
-The script calculates average requests, peak requests, and yearly storage from
-explicit assumptions.
+### After
+```go
+package main
 
-## Checkpoints
+import "fmt"
 
-1. Complete `requirements-template.md` for a task service.
-2. Model normal traffic.
-3. Model a marketing peak.
-4. Model ten-times user growth.
-5. Add read/write ratio and largest response size.
-6. Add database connection and worker-capacity budgets.
-7. Identify the first likely bottleneck in each scenario.
+func helper() string {
+    return "turn the brief into load, latency, and storage numbers"
+}
 
-## Required Scenarios
+func main() {
+    fmt.Println(helper())
+}
+```
 
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("1000 req/s at 200ms p95 needs queue and worker estimates")
+}
+```
+
+### Expected output
 ```text
-normal:
-    25,000 daily users
-    30 requests per user
-    12x peak multiplier
-
-campaign:
-    same users
-    40x peak multiplier
-
-growth:
-    250,000 daily users
-    30 requests per user
-    12x peak multiplier
+1000 req/s at 200ms p95 needs queue and worker estimates
 ```
 
-## Failure Drill
+### Transfer the pattern, not the names
 
-Design capacity from average RPS only. Compare it with campaign peak RPS and
-explain the expected overload.
+| In the example | In this exercise |
+|---|---|
+| throughput | counts work per second |
+| latency | bounds waiting |
+| storage | holds the backlog |
 
-## Done Means
+## Design / Reasoning Before Syntax
 
-Every capacity claim has units, arithmetic, assumptions, and a measurement that
-could confirm or reject it.
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
 
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
+
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

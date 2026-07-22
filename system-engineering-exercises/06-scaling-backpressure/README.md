@@ -1,56 +1,102 @@
 # Project 06 - Scaling And Backpressure
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Measure one bottleneck and reject excess work instead of allowing unbounded
-queues and memory growth.
+## What You Are Learning
 
-## Starter
+- scaling without backpressure just moves the bottleneck
+- queues, limits, and shedding need a policy
+- the system should slow down before it falls over
 
-The server exposes `/work`. Every request sleeps for 200 ms. It currently
-accepts unlimited concurrent requests.
+## Beginner Bridge
 
-## Checkpoints
+Start from one service or one boundary. Then add the new control rule only where it is needed.
 
-1. Add a buffered-channel semaphore allowing five workers.
-2. Return 503 immediately when all workers and queue slots are occupied.
-3. Include `Retry-After`.
-4. Count active, completed, and rejected requests.
-5. Add `/metrics` returning the counters as JSON.
-6. Run sequential and concurrent measurements.
+### Before
+```go
+package main
 
-Concurrent PowerShell:
+import "fmt"
 
-```powershell
-$jobs = 1..30 | ForEach-Object {
-    Start-Job {
-        curl.exe -s -o NUL -w "%{http_code}" http://localhost:8082/work
-    }
+func main() {
+    fmt.Println("draw the boundary before the implementation")
 }
-
-$jobs | Receive-Job -Wait -AutoRemoveJob |
-    Group-Object |
-    Select-Object Name, Count
 ```
 
-## Failure Drill
+### After
+```go
+package main
 
-Replace the bounded semaphore with one goroutine per request and a growing
-in-memory queue. Explain what happens when arrival rate exceeds completion rate.
+import "fmt"
 
-## Design Decision
+func helper() string {
+    return "slow the producer before the queue explodes"
+}
 
-Compare:
+func main() {
+    fmt.Println(helper())
+}
+```
 
-- optimize the work
-- increase bounded worker capacity
-- add instances
-- queue asynchronous jobs
-- reject/rate-limit callers
+## Worked Example
 
-Choose only after naming the measured resource limit.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Done Means
+### Example code
+```go
+package main
 
-Overload produces a controlled response and observable rejection count.
+import "fmt"
 
+func main() {
+    fmt.Println("slow producers before the queue explodes")
+}
+```
+
+### Expected output
+```text
+slow producers before the queue explodes
+```
+
+### Transfer the pattern, not the names
+
+| In the example | In this exercise |
+|---|---|
+| backpressure | pushes slowdown upstream |
+| queue | stores overflow |
+| limit | keeps the system within bounds |
+
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
+
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?

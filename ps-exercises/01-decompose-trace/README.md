@@ -1,69 +1,113 @@
 # Project 01 - Decompose And Trace
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Given daily temperatures, return how many are below zero, equal to zero, and
-above zero.
+## What You Are Learning
 
-Input:
+- break the problem into a smallest workable step
+- trace tables show what changes on each iteration
+- the direct version proves the shape of the solution
 
-```text
-[-2, 0, 5, -1, 3]
+## Beginner Bridge
+
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-Output:
+### After
+```go
+package main
 
-```text
-below=2 zero=1 above=2
+import "fmt"
+
+func helper() string {
+    return "break the problem into a direct traceable step"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-## Algorithm From Zero
+## Worked Example
 
-You need three counters and one pass.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-Pseudocode:
+### Example code
+```go
+package main
 
-```text
-below = 0
-zero = 0
-above = 0
+import "fmt"
 
-FOR each temperature
-    IF temperature < 0
-        below = below + 1
-    ELSE IF temperature == 0
-        zero = zero + 1
-    ELSE
-        above = above + 1
+func countEven(nums []int) int {
+    count := 0
+    for _, n := range nums {
+        if n%2 == 0 {
+            count++
+        }
+    }
+    return count
+}
 
-RETURN all three counters
+func main() {
+    nums := []int{2, 5, 6, 9}
+    fmt.Println(countEven(nums))
+}
 ```
 
-## Hand Trace
+### Expected output
+```text
+2
+```
 
-| Value | Below | Zero | Above |
-|---:|---:|---:|---:|
-| start | 0 | 0 | 0 |
-| -2 | 1 | 0 | 0 |
-| 0 | 1 | 1 | 0 |
-| 5 | 1 | 1 | 1 |
-| -1 | 2 | 1 | 1 |
-| 3 | 2 | 1 | 2 |
+### Transfer the pattern, not the names
 
-## Complexity
+| In the example | In this exercise |
+|---|---|
+| countEven | does one traceable job |
+| count | shows the running state |
+| main | prints the proof |
 
-Every value is visited once: `O(n)` time. Only three counters are stored:
-`O(1)` extra space.
+## Design / Reasoning Before Syntax
 
-## Tasks
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-1. Implement `classify`.
-2. test empty input.
-3. test all-negative/all-zero/all-positive.
-4. verify counts always sum to input length.
-5. print a trace while learning, then remove debug output.
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-## Done Means
+## Your Program / Tasks
 
-You can write pseudocode and predict every counter before running the function.
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
 
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

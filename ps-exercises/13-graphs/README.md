@@ -1,74 +1,115 @@
 # Project 13 - Graphs And Breadth-First Search
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Find the fewest friendship steps between two users in an unweighted network.
+## What You Are Learning
 
-## What A Graph Is
+- graph problems track nodes, edges, and visited state
+- search order matters when edges branch
+- you need a rule to avoid revisiting nodes forever
 
-A graph contains:
+## Beginner Bridge
 
-- vertices/nodes: users
-- edges: friendships
+Start from a direct loop or trace. Then add the pattern only where it is needed.
 
-Unlike a tree, graphs can have cycles and several paths.
+### Before
+```go
+package main
 
-Adjacency list:
+import "fmt"
 
-```text
-A -> B, C
-B -> A, D
-C -> A, D
-D -> B, C
+func main() {
+    fmt.Println("start with the direct version")
+}
 ```
 
-## Breadth-First Search
+### After
+```go
+package main
 
-BFS explores by distance:
+import "fmt"
 
-```text
-distance 0: start
-distance 1: direct neighbors
-distance 2: neighbors of neighbors
+func helper() string {
+    return "walk nodes with a visited rule"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-Use a queue and visited set.
+## Worked Example
 
-Pseudocode:
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-```text
-enqueue start
-mark start visited
+### Example code
+```go
+package main
 
-WHILE queue not empty
-    current = dequeue
-    IF current is target
-        reconstruct path
-    FOR each neighbor
-        IF neighbor not visited
-            mark visited immediately
-            remember predecessor
-            enqueue neighbor
-return not found
+import "fmt"
+
+func dfs(start string, graph map[string][]string, visited map[string]bool) int {
+    if visited[start] {
+        return 0
+    }
+    visited[start] = true
+    count := 1
+    for _, next := range graph[start] {
+        count += dfs(next, graph, visited)
+    }
+    return count
+}
+
+func main() {
+    graph := map[string][]string{"A": {"B", "C"}, "B": {"D"}}
+    fmt.Println(dfs("A", graph, map[string]bool{}))
+}
 ```
 
-Mark visited when enqueuing, not when dequeuing, to avoid repeated queue entries.
+### Expected output
+```text
+4
+```
 
-## Complexity
+### Transfer the pattern, not the names
 
-Each vertex and edge is processed at most a constant number of times:
-`O(V + E)` time and `O(V)` extra space.
+| In the example | In this exercise |
+|---|---|
+| graph | stores edges |
+| visited | prevents loops |
+| dfs | walks the structure |
 
-## Tasks
+## Design / Reasoning Before Syntax
 
-1. return whether path exists.
-2. return shortest path.
-3. handle start equals target.
-4. handle disconnected graph.
-5. test cycles and duplicate edges.
-6. reject/ignore unknown nodes by documented policy.
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-## Done Means
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-You can draw queue contents, visited set, and predecessor map per step.
+## Your Program / Tasks
 
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
+
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

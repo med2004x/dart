@@ -1,86 +1,119 @@
-# Problem Solving And Algorithms Project Track
+# Project 06 - Two Pointers
 
-`PS` means problem solving.
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-You are not expected to know algorithms before starting. An algorithm is a
-finite, precise sequence of steps that transforms input into output.
+## What You Are Learning
 
-Example:
+- two pointers walk the data from one or both ends
+- the pointers move based on what the current pair tells you
+- the state is the gap between the pointers
 
+## Beginner Bridge
+
+Start from a direct loop or trace. Then add the pattern only where it is needed.
+
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("start with the direct version")
+}
+```
+
+### After
+```go
+package main
+
+import "fmt"
+
+func helper() string {
+    return "use two positions to narrow the work"
+}
+
+func main() {
+    fmt.Println(helper())
+}
+```
+
+## Worked Example
+
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
+
+### Example code
+```go
+package main
+
+import "fmt"
+
+func hasPair(nums []int, target int) bool {
+    left, right := 0, len(nums)-1
+    for left < right {
+        sum := nums[left] + nums[right]
+        if sum == target {
+            return true
+        }
+        if sum < target {
+            left++
+            continue
+        }
+        right--
+    }
+    return false
+}
+
+func main() {
+    nums := []int{1, 3, 4, 6}
+    fmt.Println(hasPair(nums, 7))
+}
+```
+
+### Expected output
 ```text
-input: [4, 7, 2]
-goal: total
-steps:
-    start total at 0
-    add each number
-output: 13
+true
 ```
 
-Use the short [Quick Reference](QUICK-REFERENCE.md) when a Go or algorithm
-pattern is unfamiliar. It gives generic syntax and proof habits without solving
-the numbered projects.
+### Transfer the pattern, not the names
 
-The code is a translation of the steps.
-
-## How To Solve A Problem
-
-Use this order:
-
-1. Restate the input and output.
-2. Write examples by hand.
-3. list invalid and edge inputs.
-4. write direct pseudocode.
-5. trace every variable.
-6. translate to Go.
-7. test normal, boundary, and failure cases.
-8. measure complexity only after correctness.
-9. choose a better algorithm only when needed.
-
-## Complexity In Plain Language
-
-Complexity describes how work or memory grows when input grows.
-
-- `O(1)`: same amount of work regardless of input size
-- `O(n)`: work grows roughly with number of items
-- `O(n log n)`: common efficient sorting growth
-- `O(n^2)`: compare many pairs; doubles can create about four times work
-
-Big-O does not measure exact milliseconds. It describes growth.
-
-## Project Map
-
-| Project | Problem-solving tool |
+| In the example | In this exercise |
 |---|---|
-| 01 Decompose And Trace | pseudocode and state tables |
-| 02 Aggregation | one-pass totals/min/max |
-| 03 Linear Search | find by scanning |
-| 04 Frequency Maps | count/group by key |
-| 05 Sorting | order records deliberately |
-| 06 Two Pointers | coordinate two positions |
-| 07 Sliding Window | reuse adjacent-range work |
-| 08 Stack And Queue | LIFO/FIFO state |
-| 09 Recursion | solve smaller copies safely |
-| 10 Binary Search | halve sorted search space |
-| 11 Intervals | sort and merge ranges |
-| 12 Trees | hierarchical traversal |
-| 13 Graphs | connected traversal/BFS |
-| 14 Dynamic Programming | reuse overlapping results |
-| 15 Capstone | dependency planner |
+| left/right | move toward each other |
+| sum | decides which pointer moves |
+| return true | stops once the answer is found |
 
-## Commands
+## Design / Reasoning Before Syntax
 
-```powershell
-Set-Location C:\Users\pc\Documents\dart\ps-exercises
-gofmt -w .
-go test ./...
-go vet ./...
-```
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-## Rules
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-- Do not memorize code.
-- Do not optimize before the direct solution works.
-- Do not use a named algorithm you cannot trace.
-- Do not claim complexity without identifying the repeated operation.
-- Do not ignore empty input, duplicates, ties, or integer boundaries.
+## Your Program / Tasks
 
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
+
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

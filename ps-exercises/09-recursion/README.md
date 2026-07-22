@@ -1,67 +1,118 @@
 # Project 09 - Recursion
 
-## Problem
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Count all comments in a nested discussion where each comment can have replies.
+## What You Are Learning
 
-## What Recursion Is
+- recursion needs a base case
+- each call works on a smaller subproblem
+- you need to trace call depth and return order
 
-A recursive function calls itself on a smaller part of the same problem.
+## Beginner Bridge
 
-Data:
+Start from a direct loop or trace. Then add the pattern only where it is needed.
 
-```text
-comment
-`-- replies
-    `-- replies
+### Before
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("count the nested items by hand")
+}
 ```
 
-Algorithm:
+### After
+```go
+package main
 
-```text
-FUNCTION count(comment)
-    total = 1 for current comment
-    FOR each reply
-        total = total + count(reply)
-    RETURN total
+import "fmt"
+
+func countLeaves(nodes []string) int {
+    if len(nodes) == 0 {
+        return 0
+    }
+    if len(nodes) == 1 {
+        return 1
+    }
+    return countLeaves(nodes[:len(nodes)-1]) + 1
+}
+
+func main() {
+    fmt.Println(countLeaves([]string{"a", "b", "c"}))
+}
 ```
 
-The base case is a comment with no replies. Its loop runs zero times and returns
-1. A base case prevents infinite calls.
+## Worked Example
 
-## Call Trace
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-```text
-A
-|-- B
-`-- C
-    `-- D
+### Example code
+```go
+package main
+
+import "fmt"
+
+func countLeaves(nodes []string) int {
+    if len(nodes) == 0 {
+        return 0
+    }
+    if len(nodes) == 1 {
+        return 1
+    }
+    return countLeaves(nodes[:len(nodes)-1]) + 1
+}
+
+func main() {
+    fmt.Println(countLeaves([]string{"a", "b", "c"}))
+}
 ```
 
+### Expected output
 ```text
-count(B) = 1
-count(D) = 1
-count(C) = 1 + count(D) = 2
-count(A) = 1 + count(B) + count(C) = 4
+3
 ```
 
-## Complexity
+### Transfer the pattern, not the names
 
-Every comment is visited once: `O(n)` time. Call-stack space is proportional to
-maximum nesting depth: `O(h)`.
+| In the example | In this exercise |
+|---|---|
+| base case | stops the call chain |
+| smaller slice | shrinks the problem |
+| return | combines the recursive result |
 
-Deep untrusted nesting can exhaust stack resources. An explicit stack can
-replace recursion.
+## Design / Reasoning Before Syntax
 
-## Tasks
+1. Write the input shape and the smallest useful state.
+2. Choose the one variable that proves progress.
+3. Trace every step with a table or a short list.
+4. Keep the stop rule visible before you optimize.
+5. Compare the final answer against the trace.
 
-1. count all comments.
-2. find maximum depth.
-3. flatten comments in preorder.
-4. test one node, wide tree, deep chain, empty forest.
-5. write an iterative stack version.
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
 
-## Done Means
+## Your Program / Tasks
 
-You can identify the smaller subproblem, base case, and maximum call depth.
+1. Solve the pattern with a direct trace first.
+2. Write the direct version first, even if it looks boring.
+3. Prove the output with a trace table or a small hand walk.
 
+## Build In Checkpoints
+
+1. Define the input shape and the stop condition.
+2. Write the smallest loop or recursive step.
+3. Add the boundary case before you touch the edge cases.
+4. Compare your result with a hand trace.
+
+## Failure Drills
+
+1. Start with a clever trick before the direct version works. Why: you will not know what you are proving.
+2. Skip the trace table. Why: the state changes stay hidden.
+3. Forget the not-found or empty-input case. Why: that is where the bug lives.
+
+## You Understand This When / Done Means
+
+- Can you describe the state that changes on every step?
+- Can you explain why the algorithm stops?
+- Can you predict the answer without running the code?

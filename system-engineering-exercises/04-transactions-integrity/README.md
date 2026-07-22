@@ -1,50 +1,102 @@
 # Project 04 - Transactions And Integrity
 
-## Goal
+If a syntax item is unfamiliar, use the local quick reference in this track. It contains syntax examples and helper notes without solving this project.
 
-Guarantee that a failed persistence operation leaves no visible in-memory
-change.
+## What You Are Learning
 
-## Contract
+- transactions keep related changes together
+- integrity rules prevent partial updates from leaking out
+- the system should define what all-or-nothing means
 
+## Beginner Bridge
+
+Start from one service or one boundary. Then add the new control rule only where it is needed.
+
+### Before
 ```go
-type TaskWriter interface {
-    Save([]Task) error
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("draw the boundary before the implementation")
 }
 ```
 
-Repository create flow:
+### After
+```go
+package main
 
-```text
-lock repository
-copy current tasks
-append new task to candidate copy
-save candidate copy
-if save fails, return without changing current tasks
-replace current tasks
-unlock
+import "fmt"
+
+func helper() string {
+    return "commit related writes together or not at all"
+}
+
+func main() {
+    fmt.Println(helper())
+}
 ```
 
-## Checkpoints
+## Worked Example
 
-1. Implement a successful writer.
-2. Implement a writer returning `disk full`.
-3. Implement repository create with candidate state.
-4. Test successful commit.
-5. Test failed save leaves count and next ID unchanged.
-6. Test concurrent creates with `go test -race`.
+Use the same pattern in a different domain first. The names are different. The structure is the part to copy.
 
-## Failure Drill
+### Example code
+```go
+package main
 
-Mutate repository memory before `Save`. The rollback test must fail. Restore the
-commit-after-save order.
+import "fmt"
 
-## PostgreSQL Extension
+func main() {
+    fmt.Println("commit both writes or commit neither")
+}
+```
 
-After PostgreSQL project 09, repeat the idea with an account transfer and verify
-rollback preserves total balance.
+### Expected output
+```text
+commit both writes or commit neither
+```
 
-## Done Means
+### Transfer the pattern, not the names
 
-The caller never sees a state change from an operation reported as failed.
+| In the example | In this exercise |
+|---|---|
+| transaction | groups the writes |
+| integrity | prevents partial state |
+| rollback | undoes the failed path |
 
+## Design / Reasoning Before Syntax
+
+1. Write the boundary or control rule first.
+2. Name the failure mode and the recovery path.
+3. Decide which component owns the state change.
+4. Add numbers or limits so the design can be checked.
+5. Keep the plan easy to trace during review.
+
+This is the proof path. The code should match it instead of inventing a new shape after the fact.
+
+## Your Program / Tasks
+
+1. Reason about the system before you write implementation code.
+2. Draw the boundary or control rule before you write the implementation details.
+3. Keep the load, failure, and recovery story visible in the text.
+
+## Build In Checkpoints
+
+1. Write the assumption or boundary rule first.
+2. Add the simplest path that proves the idea.
+3. Add the failure path or recovery path second.
+4. Check that the design still makes sense when the load or failure grows.
+
+## Failure Drills
+
+1. Handwave the numbers. Why: design without numbers is theater.
+2. Hide the boundary. Why: the caller and callee will fight over ownership.
+3. Describe recovery only in prose. Why: the real recovery path must be concrete.
+
+## You Understand This When / Done Means
+
+- Can you explain where responsibility changes hands?
+- Can you name the failure mode and the recovery path?
+- Can you show the decision that keeps the system within its limits?
