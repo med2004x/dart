@@ -1,0 +1,6 @@
+-- TODO: create app.tags.
+-- TODO: create app.task_tags with:
+--   task_id foreign key
+--   tag_id foreign key
+--   composite primary key
+-- TODO: seed at least three tags and five relationships.

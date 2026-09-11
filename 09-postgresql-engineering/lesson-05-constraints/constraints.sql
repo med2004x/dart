@@ -1,0 +1,3 @@
+-- TODO: add named UNIQUE, CHECK, and FOREIGN KEY constraints.
+-- Use btrim(value) <> '' for required nonblank text.
+-- Inspect existing rows before applying each constraint.

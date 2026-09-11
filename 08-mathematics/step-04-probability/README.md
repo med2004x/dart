@@ -1,0 +1,13 @@
+# Probability
+
+Sample spaces, conditional probability, Bayes, random variables, distributions, expectation, variance, covariance, and limit ideas.
+
+This is a university-level track. Learn definitions, prove representative results, solve exercises by hand, and then implement selected ideas in code.
+
+## Rule
+
+Do not replace derivations with calculator output. Calculation tools are for checking, not for learning the mathematics.
+
+## Recommended sequence
+
+Lessons should move from definitions → worked examples → proof/derivation → exercises → computational verification → engineering application.

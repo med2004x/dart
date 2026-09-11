@@ -1,0 +1,10 @@
+-- TODO: implement one atomic transfer.
+--
+-- BEGIN;
+-- conditional debit with RETURNING
+-- verify one source row
+-- credit destination with RETURNING
+-- verify one destination row
+-- COMMIT;
+--
+-- During development, use ROLLBACK until verification is correct.

@@ -1,76 +1,33 @@
-# Go Mastery Learning Workspace
+# Dart Engineering Curriculum
 
-This workspace teaches Go and backend systems through connected project tracks:
+A dependency-ordered path from programming fundamentals to high-level backend and systems engineering. The repository contains local exercises plus links to stronger external courses and implementation labs.
 
-- [`exercises`](exercises): twenty staged programs built by the learner
-- [`functions-methods-exercises`](functions-methods-exercises):
-  fifteen focused projects for learning function calls, parameters, returns,
-  methods, receivers, and when to choose each form
-- [`go-mastery-examples`](go-mastery-examples): runnable worked examples
-- [`system-engineering-exercises`](system-engineering-exercises):
-  fifteen hands-on systems projects covering boundaries, capacity, reliability,
-  security, deployments, evolution, and architecture review
-- [`postgresql-exercises`](postgresql-exercises):
-  seventeen cumulative PostgreSQL projects covering SQL, transactions,
-  concurrency, performance, recovery, and Go integration
-- [`api-engineering-exercises`](api-engineering-exercises):
-  fifteen contract-first projects covering HTTP semantics, validation,
-  pagination, idempotency, authorization, webhooks, and API operations
-- [`ps-exercises`](ps-exercises):
-  fifteen beginner problem-solving projects that teach every required algorithm
-  from pseudocode and hand traces before Go implementation
-- [`cs50`](cs50): CS50 setup and problem-set workspace for the C course,
-  using WSL-based compiler tools on this Windows machine
+Start with [`CURRICULUM.md`](CURRICULUM.md). Do not jump around because a later folder looks more impressive. The machine is annoyingly good at exposing missing fundamentals.
 
-Despite the parent folder name, this is a Go workspace.
+## Core rule
 
-For a compact syntax and resources guide, start with [Go Quick Reference](GO-QUICK-REFERENCE.md).
+For every lesson: learn the concept, attempt the task, verify it, deliberately break something, explain the failure, then solve a transfer problem.
 
-## Recommended Route
+## Important tracks
 
-If programming itself is new:
+- [`01-go-core`](01-go-core) — staged Go programming exercises
+- [`04-c-programming-and-memory`](04-c-programming-and-memory) — C, pointers, memory, compilation
+- [`07-computer-architecture`](07-computer-architecture) — computer architecture
+- [`08-mathematics`](08-mathematics) — university analysis, probability, statistics, linear algebra, discrete math
+- [`09-postgresql-engineering`](09-postgresql-engineering) — PostgreSQL engineering
+- [`10-operating-systems`](10-operating-systems) — operating systems
+- [`12-networking`](12-networking) — computer networking
+- [`13-database-internals`](13-database-internals) — DBMS internals
+- [`14-distributed-systems`](14-distributed-systems) — distributed systems
+- [`15-system-engineering`](15-system-engineering) — system design and reliability
+- [`16-performance-engineering`](16-performance-engineering) — performance
+- [`17-security-engineering`](17-security-engineering) — security
+- [`18-rust-systems`](18-rust-systems) — Rust systems programming
+- [`19-production-engineering`](19-production-engineering) — production operations
+- [`20-open-source-and-real-code`](20-open-source-and-real-code) — mature codebases and contributions
+- [`21-capstones`](21-capstones) — graduation projects
+- [`22-business-communication`](22-business-communication) — professional written and oral communication
 
-1. Read the exercise track's sections on execution, compiler errors, pseudocode,
-   tracing, and deliberate failure.
-2. Complete `functions-methods-exercises` 01-08 alongside the first core
-   exercises if functions and returns feel unclear.
-3. Complete exercises 01 through 06 in order.
-4. Use worked examples to study a pattern, then implement a different program
-   using that pattern.
-5. Continue through files, errors, interfaces, HTTP, layering, and the capstone.
-6. Use PS projects 01-05 alongside the core Go exercises, then continue the
-   algorithm projects in order.
-7. Complete PostgreSQL before the database-backed API projects.
-8. Complete API engineering before the final systems capstone and architecture
-   review.
+Studying FSEGS's LIG alongside this? See [`LIG-S1-MAP.md`](LIG-S1-MAP.md) for which track covers each S1 subject.
 
-If JavaScript or Python is already familiar, move faster through Go exercises
-01-06 but still complete their failure experiments.
-
-## The Standard For Understanding
-
-Code that runs once is not enough. For every program, be able to answer:
-
-- What does the compiler verify before execution?
-- Where is each value stored?
-- Which statement changes state?
-- Which values are copied?
-- What are all valid and invalid inputs?
-- Which failures occur at compile time and which at run time?
-- What evidence proves the result is correct?
-- How would the same algorithm appear in a different program?
-
-If an answer depends on "Go handles it somehow," trace that part again.
-
-## First Commands
-
-```powershell
-Set-Location C:\Users\pc\Documents\dart
-go version
-Get-Content .\exercises\README.md
-Set-Location .\exercises\01-bank-account
-go run .
-```
-
-Use [`exercises/README.md`](exercises/README.md) as the operating guide for the
-course.
+External canonical resources are indexed in [`resources/EXTERNAL-REPOS.md`](resources/EXTERNAL-REPOS.md).

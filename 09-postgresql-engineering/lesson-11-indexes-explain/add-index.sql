@@ -1,0 +1,2 @@
+-- TODO: add one index matching the filter and ordering in before.sql.
+-- Run ANALYZE app.tasks after creating it.

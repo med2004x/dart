@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: postgres-course
+    environment:
+      POSTGRES_USER: student
+      POSTGRES_PASSWORD: local-only-password
+      POSTGRES_DB: go_course
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-course-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U student -d go_course"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+volumes:
+  postgres-course-data:

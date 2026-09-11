@@ -5,7 +5,7 @@ It is a syntax reference, not a solution to any exercise.
 
 ## Run And Check Code
 
-```powershell
+```bash
 gofmt -w .\main.go
 go run .
 go test ./...
