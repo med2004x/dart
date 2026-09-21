@@ -3,16 +3,8 @@ package main
 import "fmt"
 
 func classify(values []int) (below, zero, above int) {
-	for _,value:= range values {
-		if value <0 {
-			below += 1
-		} else if value == 0 {
-			zero += 1
-		} else {
-			above += 1
-		}
-	}
-	return below, zero, above
+	// TODO: classify every value exactly once.
+	return 0, 0, 0
 }
 
 func main() {
